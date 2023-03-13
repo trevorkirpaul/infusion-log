@@ -1,3 +1,25 @@
+# Auth Template
+
+This is a template for next.js which will help me get started on new projects. Auth is set up and working with google. All which needs to be provided are the correct env values.
+
+## ENV Values (aka: Quick Start)
+
+```
+NEXT_PUBLIC_SUPABASE_URL=...
+SUPABASE_SERVICE_ROLE_KEY=...
+
+GOOGLE_OAUTH_CLIENT_ID=...
+GOOGLE_OAUTH_CLIENT_SECRET=...
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=...
+```
+
+Supabase keys can be found on their site.
+
+Google OAuth can be found on the dev console for tkirpaul@gmail.com.
+
+The Next Auth values are easier, the URL is the url of the running client. The secret can be anything at this point, since we have not deployed.
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
