@@ -1,6 +1,8 @@
 import { Title, TextInput, Checkbox } from "@mantine/core";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
+import { notifications } from "@mantine/notifications";
+import { IconCircleXFilled } from "@tabler/icons-react";
 
 export default function TrackInfusion() {
   const [formIsLoading, setFormIsLoading] = useState(false);
@@ -9,7 +11,13 @@ export default function TrackInfusion() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (status !== "authenticated") {
-      return window.alert("You must be logged in to do that!");
+      return notifications.show({
+        title: "Unauthorized",
+        message: "Please sign in to continue.",
+        color: "red",
+        autoClose: 5000,
+        icon: <IconCircleXFilled />,
+      });
     }
 
     setFormIsLoading(true);
@@ -33,8 +41,13 @@ export default function TrackInfusion() {
 
     if (!res.ok) {
       setFormIsLoading(false);
-
-      return window.alert("Something went wrong!");
+      return notifications.show({
+        title: "Something went wrong!",
+        message: "Please try again later.",
+        color: "red",
+        autoClose: 5000,
+        icon: <IconCircleXFilled />,
+      });
     }
 
     setFormIsLoading(false);
