@@ -1,24 +1,9 @@
-import { Switch } from "@headlessui/react";
-import { useState } from "react";
-
 export default function Home() {
-  const [enabled, setEnabled] = useState(false);
   return (
-    <div className="p-10">
-      <Switch
-        checked={enabled}
-        onChange={setEnabled}
-        className={`${
-          enabled ? "bg-blue-600" : "bg-gray-200"
-        } relative inline-flex h-6 w-11 items-center rounded-full`}
-      >
-        <span className="sr-only">Enable notifications</span>
-        <span
-          className={`${
-            enabled ? "translate-x-6" : "translate-x-1"
-          } inline-block h-4 w-4 transform rounded-full bg-white transition`}
-        />
-      </Switch>
-    </div>
+    <>
+      <h1 className="text-4xl font-bold">Infusion Log</h1>
+      <p>Welcome to Infusion Log. You can Track and view your infusions.</p>
+      <p>Check the sidebar on the left to Track or View your infusions.</p>
+    </>
   );
 }
