@@ -51,7 +51,12 @@ export default function TrackInfusion() {
     }
 
     setFormIsLoading(false);
-    return window.alert("Success!");
+    return notifications.show({
+      title: "Success",
+      message: "You have successfully tracked an infusion.",
+      color: "blue",
+      autoClose: 5000,
+    });
   };
   const fieldClassName = "mb-5";
   return (
