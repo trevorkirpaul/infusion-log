@@ -1,5 +1,5 @@
 import type { Infusion } from "@/utils/types";
-import { Table, Text } from "@mantine/core";
+import { Table, Text, Tooltip } from "@mantine/core";
 import dayjs from "dayjs";
 interface IProps {
   infusions: Infusion[];
@@ -14,10 +14,8 @@ export default function InfusionTable({ infusions }: IProps) {
 
   return (
     <>
-      <Text color="grey" size="sm" className="my-5">
-        Dates are in MM/DD/YYYY h:mmA format
-      </Text>
-      <Table striped highlightOnHover>
+      <Table striped highlightOnHover captionSide="top" fontSize="lg">
+        <caption>Dates are in MM/DD/YYYY h:mmA format</caption>
         <thead>
           <tr>
             <th>Infusion Date</th>

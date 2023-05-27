@@ -4,33 +4,55 @@ import type { Infusion } from "@/utils/types";
 import InfusionTable from "@/components/InfusionTable";
 import { authOptions } from "../../pages/api/auth/[...nextauth]";
 import { getServerSession } from "next-auth/next";
-import { Pagination } from "@mantine/core";
+import { Pagination, Select, Group } from "@mantine/core";
 import { useRouter } from "next/router";
+import { getUniqueBleedLocations } from "@/utils/getUniqueBleedLocations";
 
 const createPageHref = (page: number) => `?page=${page}`;
 
 interface IProps {
   infusions: Infusion[];
   numberOfInfusions: number;
+  uniqueBleedLocations: string[];
 }
 
 export default function ViewInfusions({
   infusions,
   numberOfInfusions,
+  uniqueBleedLocations,
 }: IProps) {
   const router = useRouter();
   const { page: currentPage } = router.query;
   return (
     <>
       <h1>View Infusions ({numberOfInfusions})</h1>
-      <Pagination
-        className="my-4"
-        value={currentPage ? Number(currentPage) : 1}
-        onChange={(page) => {
-          router.push(createPageHref(page));
-        }}
-        total={Math.ceil(numberOfInfusions / 4)}
-      />
+      <Group align="center" position="apart">
+        <Pagination
+          value={currentPage ? Number(currentPage) : 1}
+          onChange={(page) => {
+            router.push(createPageHref(page));
+          }}
+          total={Math.ceil(numberOfInfusions / 4)}
+        />
+        <Select
+          onChange={(selection) => {
+            const computedBleedLocation = selection
+              ? selection.replace(" ", "%20")
+              : null;
+            const computedBleedLocationParam = computedBleedLocation
+              ? `&bleed_location=${computedBleedLocation}`
+              : "";
+            router.push(`${createPageHref(1)}${computedBleedLocationParam}`);
+          }}
+          clearable
+          label="Filter by bleed location"
+          placeholder="Pick one"
+          data={uniqueBleedLocations.map((bleedLocation) => ({
+            value: bleedLocation,
+            label: bleedLocation,
+          }))}
+        />
+      </Group>
       <InfusionTable infusions={infusions} />
       <Pagination
         className="mt-4"
@@ -47,19 +69,32 @@ export default function ViewInfusions({
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getServerSession(ctx.req, ctx.res, authOptions);
   const userID = session?.user?.id;
-  const { page } = ctx.query;
+  const { page, bleed_location = null } = ctx.query;
   const range = getRange(page);
 
   const { count: numberOfInfusions, data } = await supabase
     .from("infusion")
     .select("*", { count: "exact", head: false })
     .eq("user_id", userID)
+    .eq(bleed_location ? "bleed_location" : "", bleed_location)
     .order("infusion_date", { ascending: false })
     .range(range.start, range.end);
+
+  const { data: allBleedLocations, error: allBleedLocationsError } =
+    await supabase
+      .from("infusion")
+      .select("bleed_location")
+      .eq("user_id", userID);
+
+  const uniqueBleedLocations = getUniqueBleedLocations({
+    allBleedLocations,
+    errorFromSB: allBleedLocationsError,
+  });
 
   return {
     props: {
       numberOfInfusions,
+      uniqueBleedLocations,
       infusions: data || [],
     },
   };
