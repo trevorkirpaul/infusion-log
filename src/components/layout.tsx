@@ -13,6 +13,11 @@ import { useState } from "react";
 
 export default function Layout({ children }) {
   const [opened, setOpened] = useState(false);
+
+  const handleCloseBurgerMenu = () => {
+    if (opened) setOpened(false);
+  };
+
   return (
     <AppShell
       padding="md"
@@ -24,7 +29,7 @@ export default function Layout({ children }) {
           p="xs"
           hiddenBreakpoint="sm"
         >
-          <SideBar />
+          <SideBar handleCloseBurgerMenu={handleCloseBurgerMenu} />
         </Navbar>
       }
       header={

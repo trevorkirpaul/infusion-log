@@ -3,7 +3,10 @@ import { NavLink } from "@mantine/core";
 import Link from "next/link";
 import { IconChevronRight } from "@tabler/icons-react";
 
-export default function SideBar() {
+interface IProps {
+  handleCloseBurgerMenu: () => void;
+}
+export default function SideBar({ handleCloseBurgerMenu }: IProps) {
   const router = useRouter();
 
   return (
@@ -12,6 +15,7 @@ export default function SideBar() {
         <li>
           <Link href="/">
             <NavLink
+              onClick={handleCloseBurgerMenu}
               label="Home"
               rightSection={<IconChevronRight size="0.8rem" stroke={1.5} />}
               active={router.pathname === "/"}
@@ -22,6 +26,7 @@ export default function SideBar() {
         <li>
           <Link href="/infusions/track">
             <NavLink
+              onClick={handleCloseBurgerMenu}
               label="Track Infusion"
               rightSection={<IconChevronRight size="0.8rem" stroke={1.5} />}
               active={router.pathname === "/infusions/track"}
@@ -32,6 +37,7 @@ export default function SideBar() {
         <li>
           <Link href="/infusions/view">
             <NavLink
+              onClick={handleCloseBurgerMenu}
               label="View Infusions"
               rightSection={<IconChevronRight size="0.8rem" stroke={1.5} />}
               active={router.pathname === "/infusions/view"}
