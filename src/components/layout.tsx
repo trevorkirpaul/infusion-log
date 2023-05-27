@@ -1,20 +1,52 @@
+import InnerFooter from "./InnerFooter";
 import InnerHeader from "./InnerHeader";
 import SideBar from "./SideBar";
-import { AppShell, Navbar, Header } from "@mantine/core";
+import {
+  AppShell,
+  Footer,
+  Navbar,
+  Header,
+  Burger,
+  MediaQuery,
+} from "@mantine/core";
+import { useState } from "react";
 
 export default function Layout({ children }) {
+  const [opened, setOpened] = useState(false);
   return (
     <AppShell
       padding="md"
       navbar={
-        <Navbar width={{ base: 300 }} p="xs">
+        <Navbar
+          className="h-full"
+          hidden={!opened}
+          width={{ sm: 200, lg: 300 }}
+          p="xs"
+          hiddenBreakpoint="sm"
+        >
           <SideBar />
         </Navbar>
       }
       header={
         <Header height={60} p="xs">
-          <InnerHeader />
+          <InnerHeader
+            burgerMenu={
+              <MediaQuery largerThan="sm" styles={{ display: "none" }}>
+                <Burger
+                  opened={opened}
+                  onClick={() => setOpened((o) => !o)}
+                  size="sm"
+                  mr="xl"
+                />
+              </MediaQuery>
+            }
+          />
         </Header>
+      }
+      footer={
+        <Footer height={70} p="md">
+          <InnerFooter />
+        </Footer>
       }
       styles={(theme) => ({
         main: {

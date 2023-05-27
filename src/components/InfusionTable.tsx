@@ -1,28 +1,31 @@
 import type { Infusion } from "@/utils/types";
-import { Table } from "@mantine/core";
-
+import { Table, Text } from "@mantine/core";
+import dayjs from "dayjs";
 interface IProps {
   infusions: Infusion[];
 }
 export default function InfusionTable({ infusions }: IProps) {
   const rows = infusions.map((infusions) => (
     <tr key={infusions.id}>
-      <td>{infusions.created_at}</td>
+      <td>{dayjs(infusions.infusion_date).format("MM/DD/YYYY h:mmA")}</td>
       <td>{infusions.bleed_location}</td>
-      <td>{infusions.infusion_date}</td>
     </tr>
   ));
 
   return (
-    <Table>
-      <thead>
-        <tr>
-          <th>Created At</th>
-          <th>Bleed Location</th>
-          <th>Infusion Date</th>
-        </tr>
-      </thead>
-      <tbody>{rows}</tbody>
-    </Table>
+    <>
+      <Text color="grey" size="sm" className="my-5">
+        Dates are in MM/DD/YYYY h:mmA format
+      </Text>
+      <Table striped highlightOnHover>
+        <thead>
+          <tr>
+            <th>Infusion Date</th>
+            <th>Bleed Location</th>
+          </tr>
+        </thead>
+        <tbody>{rows}</tbody>
+      </Table>
+    </>
   );
 }

@@ -1,15 +1,28 @@
-import { Title, TextInput, Checkbox } from "@mantine/core";
+import { Title, Checkbox, Autocomplete } from "@mantine/core";
 import { useSession } from "next-auth/react";
+import { supabase } from "@/utils/supabase";
 import { useState } from "react";
 import { notifications } from "@mantine/notifications";
 import { IconCircleXFilled } from "@tabler/icons-react";
+import { DateTimePicker } from "@mantine/dates";
+import { GetServerSideProps } from "next";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "../../pages/api/auth/[...nextauth]";
+import { PostgrestError } from "@supabase/supabase-js";
 
-export default function TrackInfusion() {
+const fieldClassName = "mb-5";
+
+interface IProps {
+  uniqueBleedLocations: string[];
+}
+
+export default function TrackInfusion(props: IProps) {
   const [formIsLoading, setFormIsLoading] = useState(false);
   const { status, data } = useSession();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
     if (status !== "authenticated") {
       return notifications.show({
         title: "Unauthorized",
@@ -58,13 +71,13 @@ export default function TrackInfusion() {
       autoClose: 5000,
     });
   };
-  const fieldClassName = "mb-5";
   return (
     <>
       <Title className="text-4xl font-bold mb-5">Track Infusion</Title>
       <form onSubmit={handleSubmit}>
         <div className={fieldClassName}>
-          <TextInput
+          <Autocomplete
+            data={props.uniqueBleedLocations}
             placeholder="enter location of bleed"
             label="Bleed Location"
             radius="xs"
@@ -75,16 +88,15 @@ export default function TrackInfusion() {
           />
         </div>
         <div className={fieldClassName}>
-          <TextInput
-            placeholder="enter when infusion occurred"
+          <DateTimePicker
             label="Date of Infusion"
-            radius="xs"
-            size="md"
-            withAsterisk
-            type="date"
-            defaultValue={new Date().toISOString().slice(0, 10)}
+            placeholder="Pick date and time of infusion"
+            defaultValue={new Date()}
             id="infusion_date"
             name="infusion_date"
+            withAsterisk
+            radius="xs"
+            size="md"
           />
         </div>
         <div className={fieldClassName}>
@@ -97,6 +109,7 @@ export default function TrackInfusion() {
             size="md"
           />
         </div>
+
         <button
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           type="submit"
@@ -108,3 +121,48 @@ export default function TrackInfusion() {
     </>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const session = await getServerSession(ctx.req, ctx.res, authOptions);
+  const userID = session?.user?.id;
+
+  const { data: allBleedLocations, error } = await supabase
+    .from("infusion")
+    .select("bleed_location")
+    .eq("user_id", userID);
+
+  const uniqueBleedLocations = getUniqueBleedLocations({
+    allBleedLocations,
+    errorFromSB: error,
+  });
+
+  return {
+    props: {
+      uniqueBleedLocations,
+    },
+  };
+};
+
+interface IGetUniqueBleedLocations {
+  allBleedLocations: Array<{ bleed_location: string }> | null;
+  errorFromSB: PostgrestError | null;
+}
+
+/**
+ * returns a unique array of strings, sorted, trimmed, and lowercased
+ * if an error is detected, we fail silently and return an empty array
+ */
+const getUniqueBleedLocations = (x: IGetUniqueBleedLocations) => {
+  try {
+    const { allBleedLocations, errorFromSB } = x;
+    if (errorFromSB || !allBleedLocations) {
+      return [];
+    }
+    const uniqueBleedLocations = new Set(
+      allBleedLocations.map((x) => x.bleed_location.trim().toLowerCase())
+    );
+    return Array.from(uniqueBleedLocations).sort();
+  } catch (e) {
+    return [];
+  }
+};
