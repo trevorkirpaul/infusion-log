@@ -4,9 +4,10 @@ import type { Infusion } from "@/utils/types";
 import InfusionTable from "@/components/InfusionTable";
 import { authOptions } from "../../pages/api/auth/[...nextauth]";
 import { getServerSession } from "next-auth/next";
-import { Pagination, Select, Group } from "@mantine/core";
+import { Pagination, Select, Group, Title } from "@mantine/core";
 import { useRouter } from "next/router";
 import { getUniqueBleedLocations } from "@/utils/getUniqueBleedLocations";
+import { NotSignedInCard } from "@/components/NotSignedInCard";
 
 const createPageHref = (page: number) => `?page=${page}`;
 
@@ -14,18 +15,27 @@ interface IProps {
   infusions: Infusion[];
   numberOfInfusions: number;
   uniqueBleedLocations: string[];
+  userID: string | null;
 }
 
 export default function ViewInfusions({
   infusions,
   numberOfInfusions,
   uniqueBleedLocations,
+  userID,
 }: IProps) {
   const router = useRouter();
   const { page: currentPage } = router.query;
+  if (!userID) {
+    return (
+      <>
+        <NotSignedInCard />
+      </>
+    );
+  }
   return (
     <>
-      <h1>View Infusions ({numberOfInfusions})</h1>
+      <Title className="mb-4">View Infusions ({numberOfInfusions})</Title>
       <Group align="center" position="apart">
         <Pagination
           value={currentPage ? Number(currentPage) : 1}
@@ -96,6 +106,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       numberOfInfusions,
       uniqueBleedLocations,
       infusions: data || [],
+      userID: userID || null,
     },
   };
 };

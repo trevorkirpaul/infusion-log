@@ -1,4 +1,4 @@
-import { Title, Checkbox, Autocomplete } from "@mantine/core";
+import { Title, Checkbox, Autocomplete, Textarea } from "@mantine/core";
 import { useSession } from "next-auth/react";
 import { supabase } from "@/utils/supabase";
 import { useState } from "react";
@@ -9,6 +9,7 @@ import { GetServerSideProps } from "next";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../pages/api/auth/[...nextauth]";
 import { getUniqueBleedLocations } from "@/utils/getUniqueBleedLocations";
+import { NotSignedInCard } from "@/components/NotSignedInCard";
 
 const fieldClassName = "mb-5";
 
@@ -38,11 +39,13 @@ export default function TrackInfusion(props: IProps) {
     const bleedLocation = event.target.bleed_location.value;
     const infusionDate = event.target.infusion_date.value;
     const treatedWithin = event.target.treated_within.checked;
+    const notes = event.target.notes.value;
 
     const body = {
       bleedLocation,
       infusionDate,
       treatedWithin,
+      notes,
       userID: data?.user?.id,
     };
 
@@ -71,6 +74,11 @@ export default function TrackInfusion(props: IProps) {
       autoClose: 5000,
     });
   };
+
+  if (status !== "authenticated") {
+    return <NotSignedInCard />;
+  }
+
   return (
     <>
       <Title className="text-4xl font-bold mb-5">Track Infusion</Title>
@@ -78,6 +86,7 @@ export default function TrackInfusion(props: IProps) {
         <div className={fieldClassName}>
           <Autocomplete
             data={props.uniqueBleedLocations}
+            description="Enter the location of the bleed. You can also add a new location by typing it in. If there are multiple locations, enter the other locations in the notes field."
             placeholder="enter location of bleed"
             label="Bleed Location"
             radius="xs"
@@ -91,6 +100,7 @@ export default function TrackInfusion(props: IProps) {
           <DateTimePicker
             label="Date of Infusion"
             placeholder="Pick date and time of infusion"
+            description="Enter the date and time of the infusion. If you don't remember the exact time, you can enter the time you remember."
             defaultValue={new Date()}
             id="infusion_date"
             name="infusion_date"
@@ -99,8 +109,22 @@ export default function TrackInfusion(props: IProps) {
             size="md"
           />
         </div>
+
+        <div className={fieldClassName}>
+          <Textarea
+            label="Notes"
+            description="Enter any notes about the infusion. For example, if you had multiple bleeds, you can enter the other locations here."
+            placeholder="Enter notes about the infusion"
+            id="notes"
+            name="notes"
+            radius="xs"
+            size="md"
+          />
+        </div>
+
         <div className={fieldClassName}>
           <Checkbox
+            description="If you were treated within 3 hours of the bleed, check this box."
             labelPosition="left"
             label="Treated Within 3 Hours"
             defaultChecked={true}

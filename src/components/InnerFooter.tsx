@@ -7,12 +7,13 @@ import { IconChevronRight } from "@tabler/icons-react";
 const InnerFooter: FC = () => {
   const { status, data, ...rest } = useSession();
   const signInLink =
-    status === "authenticated" ? "/api/auth/signout" : "/api/auth/signin";
+    status === "authenticated" ? "/profile" : "/api/auth/signin";
   const src = status === "authenticated" ? data?.user?.image : null;
 
   return (
     <Link href={signInLink}>
       <NavLink
+        className="w-72"
         label={
           <>
             <Text weight={900} size="sm">
