@@ -31,9 +31,11 @@ export const ProfileInfoPanel: React.FC<IProps> = ({
     try {
       setUpdateUserIsLoading(true);
       const bleeding_disorder = event.target.bleeding_disorder.value;
+      const theme = event.target.theme.value || "dark";
 
       const body = {
         bleeding_disorder,
+        theme,
       };
 
       const res = await fetch("/api/user", {
@@ -123,6 +125,14 @@ export const ProfileInfoPanel: React.FC<IProps> = ({
               value: `${bleedingDisorder.id}`,
               label: bleedingDisorder.name,
             }))}
+        />
+        <NativeSelect
+          name="theme"
+          defaultValue={user.theme}
+          id="theme"
+          label="Theme"
+          placeholder="Select your theme for Infusion Log"
+          data={["light", "dark"]}
         />
         <Button
           className="mt-10"

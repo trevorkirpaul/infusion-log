@@ -25,19 +25,22 @@ export const authOptions = {
       // fetch the user's role: user | admin | superuser
       const { data: userFromDB, error: userFromDBError } = await supabase
         .from("user")
-        .select("id")
+        .select("id, theme")
         .eq("email", user.email);
 
       let userID;
+      let userTheme = "dark";
 
       if (userFromDB.length === 0) {
         const { data } = await supabase
           .from("user")
           .insert({ email: user.email })
-          .select("id");
+          .select("id, theme");
         userID = data[0].id;
+        userTheme = data[0].theme;
       } else {
         userID = userFromDB[0].id;
+        userTheme = userFromDB[0].theme;
       }
 
       if (signingSecret) {
@@ -51,6 +54,7 @@ export const authOptions = {
         session.supabaseAccessToken = jwt.sign(payload, signingSecret);
       }
       session.user.id = userID;
+      session.user.theme = userTheme;
       return session;
     },
   },
