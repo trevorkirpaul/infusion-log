@@ -25,22 +25,4 @@ export default function LoginPage() {
       <button onClick={() => signIn()}>Sign in</button>
     </>
   );
-
-  // const handleSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
-  //   e.preventDefault();
-  //   const { email, password } = e.currentTarget.elements;
-  //   console.log("submitted", { email: email.value, password: password.value });
-  // };
-
-  // return (
-  //   <div className={s.wrapper}>
-  //     <form className={s.form} onSubmit={handleSubmit}>
-  //       <input name="email" type="email" placeholder="email" />
-  //       <input name="password" type="password" placeholder="password" />
-  //       <button type="submit" className={s.button}>
-  //         Log In
-  //       </button>
-  //     </form>
-  //   </div>
-  // );
 }
