@@ -9,6 +9,7 @@ export default function InfusionTable({ infusions }: IProps) {
     <tr key={infusions.id}>
       <td>{dayjs(infusions.infusion_date).format("MM/DD/YYYY h:mmA")}</td>
       <td>{infusions.bleed_location}</td>
+      <td className="max-w-sm">{infusions.notes || "n/a"}</td>
     </tr>
   ));
 
@@ -20,6 +21,7 @@ export default function InfusionTable({ infusions }: IProps) {
           <tr>
             <th>Infusion Date</th>
             <th>Bleed Location</th>
+            <th className="max-w-sm">Notes</th>
           </tr>
         </thead>
         <tbody>{rows}</tbody>

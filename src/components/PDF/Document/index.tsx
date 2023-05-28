@@ -34,6 +34,10 @@ const styles = StyleSheet.create({
   textTitle: {
     marginBottom: 40,
   },
+  text: {
+    fontSize: 10,
+    marginBottom: 5,
+  },
   textCreatedOn: {
     marginBottom: 50,
     fontSize: 10,
@@ -42,15 +46,33 @@ const styles = StyleSheet.create({
 
 interface IProps {
   infusions: Infusion[];
+  start: string | null;
+  end: string | null;
+  name: string | null;
+  email: string | null;
 }
 
-export const InfusionLogReportPDF = ({ infusions }: IProps) => (
+export const InfusionLogReportPDF = ({
+  infusions,
+  start,
+  end,
+  name,
+  email,
+}: IProps) => (
   <Document>
     <Page size="A4" style={styles.page}>
       <View style={styles.section}>
         <Text style={styles.textTitle}>Infusion Log | Report</Text>
-        <Text style={styles.textCreatedOn}>
+        <Text style={styles.text}>Name: {name}</Text>
+        <Text style={styles.text}>Email: {email}</Text>
+        <Text style={styles.text}>
           Created On: {dayjs().format("MM/DD/YYYY h:mmA")}
+        </Text>
+        <Text style={styles.text}>
+          Start Date: {dayjs(start).format("MM/DD/YYYY h:mmA")}
+        </Text>
+        <Text style={styles.textCreatedOn}>
+          End Date: {dayjs(end).format("MM/DD/YYYY h:mmA")}
         </Text>
         <InfusionsTable infusions={infusions} />
       </View>

@@ -13,7 +13,6 @@ import {
   PDFViewer,
   PDFDownloadLink,
 } from "@react-pdf/renderer";
-import { useSession } from "next-auth/react";
 import { InfusionLogReportPDF } from "@/components/PDF/Document";
 import { supabase } from "@/utils/supabase";
 import type { Infusion } from "@/utils/types";
@@ -33,13 +32,25 @@ const styles = StyleSheet.create({
 interface IProps {
   infusions: Infusion[];
   numberOfInfusions: number;
+  start: string | null;
+  end: string | null;
+  name: string | null;
+  email: string | null;
 }
 
-function Example({ infusions }: IProps) {
+function Example({ infusions, start, end, name, email }: IProps) {
   return (
     <div>
       <PDFDownloadLink
-        document={<InfusionLogReportPDF infusions={infusions} />}
+        document={
+          <InfusionLogReportPDF
+            infusions={infusions}
+            start={start}
+            end={end}
+            name={name}
+            email={email}
+          />
+        }
         fileName="infusion_log_test.pdf"
         style={styles.downloadLink}
       >
@@ -55,16 +66,24 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getServerSession(ctx.req, ctx.res, authOptions);
   const userID = session?.user?.id;
 
+  const { start, end } = ctx.query;
+
   const { count: numberOfInfusions, data } = await supabase
     .from("infusion")
     .select("*", { count: "exact", head: false })
     .eq("user_id", userID)
+    .gte("infusion_date", start)
+    .lte("infusion_date", end)
     .order("infusion_date", { ascending: false });
 
   return {
     props: {
       numberOfInfusions,
       infusions: data || [],
+      start,
+      end,
+      email: session?.user?.email,
+      name: session?.user?.name,
     },
   };
 };

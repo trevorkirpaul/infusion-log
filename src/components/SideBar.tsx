@@ -45,6 +45,28 @@ export default function SideBar({ handleCloseBurgerMenu }: IProps) {
             />
           </Link>
         </li>
+        <li>
+          <Link href="/report">
+            <NavLink
+              onClick={handleCloseBurgerMenu}
+              label="Reports"
+              rightSection={<IconChevronRight size="0.8rem" stroke={1.5} />}
+              active={router.pathname === "/report"}
+              color="cyan"
+            />
+          </Link>
+        </li>
+        <li>
+          <Link href="/profile">
+            <NavLink
+              onClick={handleCloseBurgerMenu}
+              label="Profile"
+              rightSection={<IconChevronRight size="0.8rem" stroke={1.5} />}
+              active={router.pathname === "/profile"}
+              color="cyan"
+            />
+          </Link>
+        </li>
       </div>
     </ul>
   );
