@@ -46,7 +46,7 @@ export default function Layout({ children }) {
           </Navbar>
         }
         header={
-          <Header height={60} p="xs">
+          <Header height={50} p="xs">
             <InnerHeader
               burgerMenu={
                 <MediaQuery largerThan="sm" styles={{ display: "none" }}>
@@ -62,7 +62,7 @@ export default function Layout({ children }) {
           </Header>
         }
         footer={
-          <Footer height={70} p="md">
+          <Footer height={70} p="xs">
             <InnerFooter />
           </Footer>
         }

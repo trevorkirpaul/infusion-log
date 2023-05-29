@@ -7,9 +7,11 @@ import { useRouter } from "next/router";
 export const ReportModal = () => {
   const [opened, { open, close }] = useDisclosure(false);
   const [value, setValue] = useState<[Date | null, Date | null]>([null, null]);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleNaviateToReportCreation = () => {
+    setLoading(true);
     const start = value[0]?.toISOString();
     const end = value[1]?.toISOString();
 
@@ -39,6 +41,8 @@ export const ReportModal = () => {
             variant="outline"
             size="lg"
             onClick={handleNaviateToReportCreation}
+            loading={loading}
+            disabled={loading}
           >
             Create Report From Date Range
           </Button>

@@ -14,11 +14,10 @@ export default function InnerHeader({ burgerMenu }: IProps) {
 
   return (
     <div className="flex justify-between">
-      <div className="flex align-baseline">
-        <IconMedicalCross color="aqua" size="2rem" className="mr-2" />
-        <Text color="white" size="xl" weight={600}>
+      <div className="flex">
+        <Text size="xl" weight={600}>
           Infusion Log{" "}
-          <Text className="inline-block" color="grey" weight={400}>
+          <Text className="inline-block pl-5" color="grey" weight={400}>
             v0.0.1
           </Text>
         </Text>
