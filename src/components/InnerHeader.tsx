@@ -16,10 +16,7 @@ export default function InnerHeader({ burgerMenu }: IProps) {
     <div className="flex justify-between">
       <div className="flex">
         <Text size="xl" weight={600}>
-          Infusion Log{" "}
-          <Text className="inline-block pl-5" color="grey" weight={400}>
-            v0.0.1
-          </Text>
+          Infusion Log
         </Text>
       </div>
       {burgerMenu}

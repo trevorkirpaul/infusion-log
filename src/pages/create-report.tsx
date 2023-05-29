@@ -1,9 +1,16 @@
 import React from "react";
 import { GetServerSideProps } from "next";
 import dynamic from "next/dynamic";
-import { Button, Title, Text as TextMantine, Divider } from "@mantine/core";
+import {
+  Button,
+  Title,
+  Text as TextMantine,
+  Divider,
+  Alert,
+} from "@mantine/core";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../pages/api/auth/[...nextauth]";
+import { IconAlertCircle } from "@tabler/icons-react";
 
 import {
   Page,
@@ -43,10 +50,16 @@ function Example({ infusions, start, end, name, email }: IProps) {
   return (
     <div>
       <Title className="mb-5">Report</Title>
-      <TextMantine className="mb-2 text-red-500">
+      <Alert
+        icon={<IconAlertCircle size="1rem" />}
+        title="Important"
+        color="yellow"
+        mb="lg"
+      >
         Infusion Log is <span className="font-bold">not</span> HIPPA compliant.
         Please do not include any personal information in your report.
-      </TextMantine>
+      </Alert>
+
       <TextMantine className="mb-10">
         Your report will be available once the button below is ready.
       </TextMantine>
@@ -70,10 +83,12 @@ function Example({ infusions, start, end, name, email }: IProps) {
             <Button
               loading={loading}
               disabled={loading}
-              color="blue"
-              variant="default"
+              color={loading ? "gray" : "green"}
+              variant="outline"
             >
-              {loading ? "Loading document..." : "Download now"}
+              {loading
+                ? "Loading document..."
+                : "Your Report is ready, click here to download now"}
             </Button>
           );
         }}
