@@ -4,7 +4,7 @@ An app for tracking infusions.
 
 - [x] create infusion
 - [x] view infusions
-- [ ] create infusion report
+- [x] create infusion report
 
 ## ENV Values (aka: Quick Start)
 
