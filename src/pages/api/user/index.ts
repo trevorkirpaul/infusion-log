@@ -36,7 +36,7 @@ const handlePut = async (
 
     const { data, error } = await supabase
       .from("user")
-      .update({ bleeding_disorder: body.bleeding_disorder })
+      .update({ bleeding_disorder: body.bleeding_disorder, theme: body.theme })
       .eq("id", userId)
       .select();
 

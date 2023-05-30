@@ -19,4 +19,5 @@ export interface User {
   email: string;
   created_at: string;
   bleeding_disorder?: number;
+  theme?: string;
 }

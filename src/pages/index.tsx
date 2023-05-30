@@ -96,7 +96,7 @@ export default function Home({ bleedLocationStats, name, userID }: IProps) {
         </Grid.Col>
         <Grid.Col {...responsePropsForGridCols}>
           <HomeActionCard
-            title="Track Infusion"
+            title="View Infusions"
             body={content.view.body}
             buttonLabel={content.view.buttonLabel}
             href="/infusions/view"

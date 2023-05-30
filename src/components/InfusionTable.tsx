@@ -15,7 +15,7 @@ export default function InfusionTable({ infusions }: IProps) {
 
   return (
     <>
-      <Table striped highlightOnHover captionSide="top" fontSize="lg">
+      <Table striped highlightOnHover fontSize="lg">
         <caption>Dates are in MM/DD/YYYY h:mmA format</caption>
         <thead>
           <tr>
