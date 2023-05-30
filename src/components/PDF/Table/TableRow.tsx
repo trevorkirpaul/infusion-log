@@ -3,21 +3,21 @@ import { Text, View, StyleSheet } from "@react-pdf/renderer";
 import type { Infusion } from "@/utils/types";
 import dayjs from "dayjs";
 
-const baseRowStyles = {
-  flexDirection: "row",
-  alignItems: "center",
-  marginBottom: 5,
-  paddingBottom: 5,
-  padding: 2,
-};
-
 const styles = StyleSheet.create({
   row: {
-    ...baseRowStyles,
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 5,
+    paddingBottom: 5,
+    padding: 2,
     backgroundColor: "lightgray",
   },
   rowLight: {
-    ...baseRowStyles,
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 5,
+    paddingBottom: 5,
+    padding: 2,
   },
   description: {
     width: "60%",
