@@ -21,7 +21,7 @@ export default function TrackInfusion(props: IProps) {
   const [formIsLoading, setFormIsLoading] = useState(false);
   const { status, data } = useSession();
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event: any) => {
     event.preventDefault();
 
     if (status !== "authenticated") {

@@ -25,7 +25,7 @@ export const ProfileInfoPanel: React.FC<IProps> = ({
     return null;
   }
 
-  const handleSubmit = async (event: React.FormEvent) => {
+  const handleSubmit = async (event: any) => {
     event.preventDefault();
 
     try {

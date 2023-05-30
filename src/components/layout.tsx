@@ -14,7 +14,7 @@ import { useSession } from "next-auth/react";
 import { MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 
-export default function Layout({ children }) {
+export default function Layout({ children }: { children: React.ReactNode }) {
   const { status, data } = useSession();
   const theme = status === "authenticated" ? data?.user?.theme : "dark";
   const [opened, setOpened] = useState(false);

@@ -21,7 +21,7 @@ export default async function handler(
   }
 }
 
-const handleError = (res: NextApiResponse, e: unknown) => {
+const handleError = (res: NextApiResponse, e: any) => {
   res.status(500).send(e ? e?.details : "error unknown");
 };
 
