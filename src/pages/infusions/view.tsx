@@ -4,7 +4,7 @@ import type { Infusion } from "@/utils/types";
 import InfusionTable from "@/components/InfusionTable";
 import { authOptions } from "../../pages/api/auth/[...nextauth]";
 import { getServerSession } from "next-auth/next";
-import { Pagination, Select, Group, Title } from "@mantine/core";
+import { Pagination, Select, Group, Title, MediaQuery } from "@mantine/core";
 import { useRouter } from "next/router";
 import { getUniqueBleedLocations } from "@/utils/getUniqueBleedLocations";
 import { NotSignedInCard } from "@/components/NotSignedInCard";
@@ -36,31 +36,32 @@ export default function ViewInfusions({
   return (
     <>
       <Title className="mb-4">View Infusions ({numberOfInfusions})</Title>
-      <Group align="center" position="apart">
+      <Select
+        className="mb-4"
+        onChange={(selection) => {
+          const computedBleedLocation = selection
+            ? selection.replace(" ", "%20")
+            : null;
+          const computedBleedLocationParam = computedBleedLocation
+            ? `&bleed_location=${computedBleedLocation}`
+            : "";
+          router.push(`${createPageHref(1)}${computedBleedLocationParam}`);
+        }}
+        clearable
+        label="Filter by bleed location"
+        placeholder="Pick one"
+        data={uniqueBleedLocations.map((bleedLocation) => ({
+          value: bleedLocation,
+          label: bleedLocation,
+        }))}
+      />
+      <Group align="center" position="apart" className="mb-4">
         <Pagination
           value={currentPage ? Number(currentPage) : 1}
           onChange={(page) => {
             router.push(createPageHref(page));
           }}
           total={Math.ceil(numberOfInfusions / 4)}
-        />
-        <Select
-          onChange={(selection) => {
-            const computedBleedLocation = selection
-              ? selection.replace(" ", "%20")
-              : null;
-            const computedBleedLocationParam = computedBleedLocation
-              ? `&bleed_location=${computedBleedLocation}`
-              : "";
-            router.push(`${createPageHref(1)}${computedBleedLocationParam}`);
-          }}
-          clearable
-          label="Filter by bleed location"
-          placeholder="Pick one"
-          data={uniqueBleedLocations.map((bleedLocation) => ({
-            value: bleedLocation,
-            label: bleedLocation,
-          }))}
         />
       </Group>
       <InfusionTable infusions={infusions} />
