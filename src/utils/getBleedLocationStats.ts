@@ -12,8 +12,8 @@ interface IGetBleedLocationStats {
 export const getBleedLocationStats = (x: IGetBleedLocationStats) => {
   try {
     const { allBleedLocations, errorFromSB } = x;
-    if (errorFromSB || !allBleedLocations) {
-      return [];
+    if (errorFromSB || !allBleedLocations || allBleedLocations.length === 0) {
+      return null;
     }
     const uniqueBleedLocations = new Set(
       allBleedLocations.map((x) => x.bleed_location.trim().toLowerCase())
@@ -27,6 +27,6 @@ export const getBleedLocationStats = (x: IGetBleedLocationStats) => {
         return { ...acc, [curr]: count };
       }, {});
   } catch (e) {
-    return [];
+    return null;
   }
 };

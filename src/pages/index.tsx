@@ -5,7 +5,6 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "../pages/api/auth/[...nextauth]";
 import { GetServerSideProps } from "next";
 import { getBleedLocationStats } from "@/utils/getBleedLocationStats";
-import Link from "next/link";
 import { NotSignedInCard } from "@/components/NotSignedInCard";
 
 const content = {
@@ -28,6 +27,7 @@ const getBleedDataForIdx = (
   bleedLocationStats: IProps["bleedLocationStats"],
   idx: number
 ) => {
+  if (!bleedLocationStats) return null;
   return Object.keys(bleedLocationStats)
     .map((key) => {
       return {
@@ -39,7 +39,7 @@ const getBleedDataForIdx = (
 };
 
 interface IProps {
-  bleedLocationStats: { [key: string]: number };
+  bleedLocationStats: { [key: string]: number } | null;
   name?: string;
   userID?: string;
 }
@@ -61,29 +61,34 @@ export default function Home({ bleedLocationStats, name, userID }: IProps) {
   return (
     <>
       <h1 className="text-4xl font-bold mb-8">{title}</h1>
-      <Card className="mb-8">
-        <Text>
-          <span className={boldText}>Primary Target Bleed Location:</span>{" "}
-          {targetBleedLocation.bleedLocation}
-        </Text>
-        <Text>
-          <span className={boldText}>Number of target bleeds:</span>{" "}
-          {targetBleedLocation.count}
-        </Text>
-        <Divider my="sm" />
-        <Text>
-          <span className={boldText}>Top Bleed Locations:</span>{" "}
-          {[0, 1, 2].map((idx) => {
-            const l = getBleedDataForIdx(bleedLocationStats, idx).bleedLocation;
-            return (
-              <span key={l}>
-                {l}
-                {idx !== 2 && ", "}
-              </span>
-            );
-          })}
-        </Text>
-      </Card>
+      {bleedLocationStats && targetBleedLocation ? (
+        <Card className="mb-8">
+          <Text>
+            <span className={boldText}>Primary Target Bleed Location:</span>{" "}
+            {targetBleedLocation.bleedLocation}
+          </Text>
+          <Text>
+            <span className={boldText}>Number of target bleeds:</span>{" "}
+            {targetBleedLocation.count}
+          </Text>
+          <Divider my="sm" />
+          <Text>
+            <span className={boldText}>Top Bleed Locations:</span>{" "}
+            {[0, 1, 2].map((idx) => {
+              const l = getBleedDataForIdx(
+                bleedLocationStats,
+                idx
+              )?.bleedLocation;
+              return (
+                <span key={l}>
+                  {l}
+                  {idx !== 2 && ", "}
+                </span>
+              );
+            })}
+          </Text>
+        </Card>
+      ) : null}
       <Grid>
         <Grid.Col {...responsePropsForGridCols}>
           <HomeActionCard
@@ -117,6 +122,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       .from("infusion")
       .select("bleed_location")
       .eq("user_id", userID);
+
+  console.log("allBleedLocations", allBleedLocations);
 
   const bleedLocationStats = getBleedLocationStats({
     allBleedLocations,
