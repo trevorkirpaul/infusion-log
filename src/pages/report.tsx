@@ -15,7 +15,7 @@ export default function Report() {
       <Title className="mb-8">Report</Title>
       <Text>
         Create a PDF report with a table showing your infusions within the
-        selected date range. Click 'Create Report' to start.
+        selected date range. Click the Create Report button to start.
       </Text>
 
       <ReportModal />
