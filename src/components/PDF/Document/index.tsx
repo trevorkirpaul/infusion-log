@@ -14,7 +14,6 @@ import { InfusionsTable } from "../Table";
 // Create styles
 const styles = StyleSheet.create({
   downloadLink: {
-    display: "inline-block",
     backgroundColor: "lightblue",
     color: "black",
     padding: 10,
