@@ -47,18 +47,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         }
         header={
           <Header height={50} p="xs">
-            <InnerHeader
-              burgerMenu={
-                <MediaQuery largerThan="sm" styles={{ display: "none" }}>
-                  <Burger
-                    opened={opened}
-                    onClick={() => setOpened((o) => !o)}
-                    size="sm"
-                    mr="xl"
-                  />
-                </MediaQuery>
-              }
-            />
+            <InnerHeader />
           </Header>
         }
         footer={
