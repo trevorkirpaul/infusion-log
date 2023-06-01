@@ -1,5 +1,5 @@
 import { useSession } from "next-auth/react";
-import { Text } from "@mantine/core";
+import { Text, MediaQuery } from "@mantine/core";
 import { IconMedicalCross } from "@tabler/icons-react";
 import type { ReactNode } from "react";
 
@@ -9,7 +9,7 @@ interface IProps {
   burgerMenu?: ReactNode;
 }
 
-export default function InnerHeader({ burgerMenu }: IProps) {
+export default function InnerHeader({}: IProps) {
   const { status } = useSession();
 
   return (
@@ -19,7 +19,6 @@ export default function InnerHeader({ burgerMenu }: IProps) {
           Infusion Log
         </Text>
       </div>
-      {burgerMenu}
     </div>
   );
 }
