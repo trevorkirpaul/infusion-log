@@ -123,8 +123,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       .select("bleed_location")
       .eq("user_id", userID);
 
-  console.log("allBleedLocations", allBleedLocations);
-
   const bleedLocationStats = getBleedLocationStats({
     allBleedLocations,
     errorFromSB: allBleedLocationsError,
