@@ -1,6 +1,9 @@
-import { Modal, Button, Group, Title, Text, Stepper } from "@mantine/core";
-import { useRouter } from "next/router";
+import { Modal, Button, Stepper, Title, Text } from "@mantine/core";
 import { FC, useState } from "react";
+import { TrackInfusionForm } from "./TrackInfusionForm";
+import { notifications } from "@mantine/notifications";
+import { IconCircleXFilled } from "@tabler/icons-react";
+import { useSession } from "next-auth/react";
 
 interface IProps {
   opened: boolean;
@@ -8,8 +11,9 @@ interface IProps {
 }
 
 export const TrackModal: FC<IProps> = ({ opened, close }) => {
-  const router = useRouter();
-  const [active, setActive] = useState(1);
+  const { status, data } = useSession();
+  const [formIsLoading, setFormIsLoading] = useState(false);
+  const [active, setActive] = useState(0);
   const [trackingFor, setTrackingFor] = useState<
     "infusion" | "medicine" | null
   >(null);
@@ -41,6 +45,61 @@ export const TrackModal: FC<IProps> = ({ opened, close }) => {
     close();
   };
 
+  const handleSubmit = async (event: any) => {
+    event.preventDefault();
+
+    if (status !== "authenticated") {
+      return notifications.show({
+        title: "Unauthorized",
+        message: "Please sign in to continue.",
+        color: "red",
+        autoClose: 5000,
+        icon: <IconCircleXFilled />,
+      });
+    }
+
+    setFormIsLoading(true);
+
+    const bleedLocation = event.target.bleed_location.value;
+    const infusionDate = event.target.infusion_date.value;
+    const treatedWithin = event.target.treated_within.checked;
+    const notes = event.target.notes.value;
+
+    const body = {
+      bleedLocation,
+      infusionDate,
+      treatedWithin,
+      notes,
+      userID: data?.user?.id,
+    };
+
+    const res = await fetch("/api/infusions/track", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+
+    if (!res.ok) {
+      setFormIsLoading(false);
+      return notifications.show({
+        title: "Something went wrong!",
+        message: "Please try again later.",
+        color: "red",
+        autoClose: 5000,
+        icon: <IconCircleXFilled />,
+      });
+    }
+
+    setFormIsLoading(false);
+    setActive(2);
+    return notifications.show({
+      title: "Success",
+      message: "You have successfully tracked an infusion.",
+      color: "blue",
+      autoClose: 5000,
+    });
+  };
+
   return (
     <>
       <Modal
@@ -49,11 +108,7 @@ export const TrackModal: FC<IProps> = ({ opened, close }) => {
         title={getModalTitle()}
         centered
       >
-        <Stepper
-          active={active}
-          onStepClick={setActive}
-          orientation="horizontal"
-        >
+        <Stepper active={active} orientation="horizontal">
           <Stepper.Step>
             <Button.Group orientation="vertical">
               <Button
@@ -65,6 +120,7 @@ export const TrackModal: FC<IProps> = ({ opened, close }) => {
                 Track Infusion
               </Button>
               <Button
+                disabled
                 color="blue"
                 variant="outline"
                 onClick={() => handleTrackFor("medicine")}
@@ -73,19 +129,22 @@ export const TrackModal: FC<IProps> = ({ opened, close }) => {
               </Button>
             </Button.Group>
           </Stepper.Step>
-          <Stepper.Step>Step 2 content: Verify email</Stepper.Step>
-          <Stepper.Step>Step 3 content: Get full access</Stepper.Step>
-          <Stepper.Completed>
-            Completed, click back button to get to previous step
-          </Stepper.Completed>
+          <Stepper.Step>
+            <TrackInfusionForm
+              handleSubmit={handleSubmit}
+              formIsLoading={formIsLoading}
+              uniqueBleedLocations={[]}
+            />
+          </Stepper.Step>
+          <Stepper.Step>
+            <Title className="mb-5">Success</Title>
+            <Text>
+              Completed, You have tracked a new infusion. You can close this
+              modal.
+            </Text>
+          </Stepper.Step>
+          {/* <Stepper.Completed></Stepper.Completed> */}
         </Stepper>
-
-        {/* <Group position="center" mt="xl">
-          <Button variant="default" onClick={prevStep}>
-            Back
-          </Button>
-          <Button onClick={nextStep}>Next step</Button>
-        </Group> */}
       </Modal>
     </>
   );
