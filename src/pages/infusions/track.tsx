@@ -4,7 +4,6 @@ import { supabase } from "@/utils/supabase";
 import { useState } from "react";
 import { notifications } from "@mantine/notifications";
 import { IconCircleXFilled } from "@tabler/icons-react";
-import { DateTimePicker } from "@mantine/dates";
 import { GetServerSideProps } from "next";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../pages/api/auth/[...nextauth]";
