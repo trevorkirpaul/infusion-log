@@ -1,9 +1,6 @@
 import { useSession } from "next-auth/react";
-import { Text, MediaQuery } from "@mantine/core";
-import { IconMedicalCross } from "@tabler/icons-react";
+import { Text } from "@mantine/core";
 import type { ReactNode } from "react";
-
-import ThemeButton from "./ThemeButton";
 
 interface IProps {
   burgerMenu?: ReactNode;
@@ -16,7 +13,7 @@ export default function InnerHeader({}: IProps) {
     <div className="flex justify-between">
       <div className="flex">
         <Text size="xl" weight={600}>
-          Infusion Log
+          &#128221; Infusion Log
         </Text>
       </div>
     </div>
