@@ -1,11 +1,18 @@
 import HomeActionCard from "@/components/HomeActionCard";
-import { Grid, Text, Card, Divider } from "@mantine/core";
+import { Grid, Text, Card, Divider, SimpleGrid, Title } from "@mantine/core";
 import { supabase } from "@/utils/supabase";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../pages/api/auth/[...nextauth]";
 import { GetServerSideProps } from "next";
 import { getBleedLocationStats } from "@/utils/getBleedLocationStats";
 import { NotSignedInCard } from "@/components/NotSignedInCard";
+import { LineChart } from "@/components/LineChart";
+import { PieChart } from "@/components/PieChart";
+import {
+  getInfusionDataForChart,
+  getInfusionsByBleedLocation,
+} from "@/utils/getInfusionDataForChart";
+import { useMediaQuery } from "@mantine/hooks";
 
 const content = {
   track: {
@@ -42,9 +49,19 @@ interface IProps {
   bleedLocationStats: { [key: string]: number } | null;
   name?: string;
   userID?: string;
+  infusionDataForChart: [string, number][];
+  infusionsByBleedLocation: [string, number][];
 }
 
-export default function Home({ bleedLocationStats, name, userID }: IProps) {
+export default function Home({
+  bleedLocationStats,
+  name,
+  userID,
+  infusionDataForChart,
+  infusionsByBleedLocation,
+}: IProps) {
+  const matchesMobile = useMediaQuery("(max-width: 800px)");
+
   if (!name || !userID) {
     return (
       <>
@@ -61,6 +78,7 @@ export default function Home({ bleedLocationStats, name, userID }: IProps) {
   return (
     <>
       <h1 className="text-4xl font-bold mb-8">{title}</h1>
+
       {bleedLocationStats && targetBleedLocation ? (
         <Card className="mb-8">
           <Text>
@@ -89,6 +107,8 @@ export default function Home({ bleedLocationStats, name, userID }: IProps) {
           </Text>
         </Card>
       ) : null}
+      <Title className="mb-5">Actions</Title>
+
       <Grid>
         <Grid.Col {...responsePropsForGridCols}>
           <HomeActionCard
@@ -109,6 +129,22 @@ export default function Home({ bleedLocationStats, name, userID }: IProps) {
           />
         </Grid.Col>
       </Grid>
+      <Title className="my-5">Stats</Title>
+      {bleedLocationStats && targetBleedLocation ? (
+        <SimpleGrid cols={matchesMobile ? 1 : 2}>
+          <LineChart
+            userId={userID}
+            infusionDataForChart={infusionDataForChart}
+          />
+          <PieChart
+            userId={userID}
+            infusionDataForChart={infusionsByBleedLocation}
+            title="Infusions By Bleed Location (Top 3)"
+          />
+        </SimpleGrid>
+      ) : (
+        <Text>No Data.</Text>
+      )}
     </>
   );
 }
@@ -128,11 +164,30 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     errorFromSB: allBleedLocationsError,
   });
 
+  const infusionDataForChart = await getInfusionDataForChart({
+    userId: userID,
+    supabase,
+  });
+
+  const _infusionDataForChart = Array.from(infusionDataForChart.entries());
+
+  const infusionsByBleedLocation = await getInfusionsByBleedLocation({
+    userId: userID,
+    supabase,
+  });
+
+  // get top 3 infusions by bleed location
+  const [f, s, t] = infusionsByBleedLocation
+    ? Array.from(infusionsByBleedLocation.entries()).sort((a, b) => b[1] - a[1])
+    : [null, null, null];
+
   return {
     props: {
       bleedLocationStats,
       name: session?.user?.name || null,
       userID: userID || null,
+      infusionDataForChart: _infusionDataForChart,
+      infusionsByBleedLocation: [f, s, t],
     },
   };
 };
