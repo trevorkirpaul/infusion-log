@@ -169,7 +169,9 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     supabase,
   });
 
-  const _infusionDataForChart = Array.from(infusionDataForChart.entries());
+  const _infusionDataForChart = Array.from(
+    infusionDataForChart ? infusionDataForChart.entries() : []
+  );
 
   const infusionsByBleedLocation = await getInfusionsByBleedLocation({
     userId: userID,
@@ -177,7 +179,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   });
 
   const sortedInfusionsByBleedLocation = Array.from(
-    infusionsByBleedLocation.entries()
+    infusionsByBleedLocation ? infusionsByBleedLocation.entries() : []
   ).sort((a, b) => b[1] - a[1]);
 
   const topThree = [
