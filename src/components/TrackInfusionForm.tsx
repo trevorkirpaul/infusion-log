@@ -1,6 +1,7 @@
 import React from "react";
-import { Title, Checkbox, Autocomplete, Textarea } from "@mantine/core";
+import { Checkbox, Autocomplete, Textarea } from "@mantine/core";
 import { DateTimePicker } from "@mantine/dates";
+import { Infusion } from "@/utils/types";
 
 const fieldClassName = "mb-5";
 
@@ -8,12 +9,14 @@ interface IProps {
   handleSubmit: (event: any) => void;
   uniqueBleedLocations: string[];
   formIsLoading: boolean;
+  currentValues?: Infusion | null;
 }
 
 export const TrackInfusionForm: React.FC<IProps> = ({
   handleSubmit,
   uniqueBleedLocations,
   formIsLoading,
+  currentValues,
 }) => {
   return (
     <form onSubmit={handleSubmit}>
@@ -28,6 +31,7 @@ export const TrackInfusionForm: React.FC<IProps> = ({
           withAsterisk
           id="bleed_location"
           name="bleed_location"
+          defaultValue={currentValues?.bleed_location || ""}
         />
       </div>
       <div className={fieldClassName}>
@@ -35,7 +39,7 @@ export const TrackInfusionForm: React.FC<IProps> = ({
           label="Date of Infusion"
           placeholder="Pick date and time of infusion"
           description="Enter the date and time of the infusion. If you don't remember the exact time, you can enter the time you remember."
-          defaultValue={new Date()}
+          defaultValue={new Date(currentValues?.infusion_date || Date.now())}
           id="infusion_date"
           name="infusion_date"
           withAsterisk
@@ -53,6 +57,7 @@ export const TrackInfusionForm: React.FC<IProps> = ({
           name="notes"
           radius="xs"
           size="md"
+          defaultValue={currentValues?.notes || ""}
         />
       </div>
 
@@ -61,7 +66,7 @@ export const TrackInfusionForm: React.FC<IProps> = ({
           description="If you were treated within 3 hours of the bleed, check this box."
           labelPosition="left"
           label="Treated Within 3 Hours"
-          defaultChecked={true}
+          defaultChecked={currentValues?.treated_within || true}
           id="treated_within"
           name="treated_within"
           size="md"
@@ -73,8 +78,21 @@ export const TrackInfusionForm: React.FC<IProps> = ({
         type="submit"
         disabled={formIsLoading}
       >
-        {!formIsLoading ? "Submit" : "...loading"}
+        {getButtonLabel({ formIsLoading, currentValues })}
       </button>
     </form>
   );
+};
+
+const getButtonLabel = ({
+  formIsLoading,
+  currentValues,
+}: Pick<IProps, "formIsLoading" | "currentValues">) => {
+  if (formIsLoading) {
+    return "loading";
+  }
+  if (currentValues) {
+    return "Update Infusion";
+  }
+  return "Submit";
 };
