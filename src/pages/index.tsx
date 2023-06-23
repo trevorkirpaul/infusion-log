@@ -176,10 +176,15 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     supabase,
   });
 
-  // get top 3 infusions by bleed location
-  const [f, s, t] = infusionsByBleedLocation
-    ? Array.from(infusionsByBleedLocation.entries()).sort((a, b) => b[1] - a[1])
-    : [null, null, null];
+  const sortedInfusionsByBleedLocation = Array.from(
+    infusionsByBleedLocation.entries()
+  ).sort((a, b) => b[1] - a[1]);
+
+  const topThree = [
+    sortedInfusionsByBleedLocation[0] || null,
+    sortedInfusionsByBleedLocation[1] || null,
+    sortedInfusionsByBleedLocation[2] || null,
+  ].filter((x) => x);
 
   return {
     props: {
@@ -187,7 +192,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       name: session?.user?.name || null,
       userID: userID || null,
       infusionDataForChart: _infusionDataForChart,
-      infusionsByBleedLocation: [f, s, t],
+      infusionsByBleedLocation: topThree,
     },
   };
 };
