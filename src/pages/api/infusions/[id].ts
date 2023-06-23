@@ -17,6 +17,8 @@ export default async function handler(
   switch (req.method) {
     case "DELETE":
       return handleDelete(req, res);
+    case "PUT":
+      return handleUpdate(req, res);
     default:
       return res.status(405).json({ message: "Method not allowed" });
   }
@@ -36,6 +38,33 @@ const handleDelete = async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(200).send({
       deletedInfusion,
       errorForDeletedInfusion,
+    });
+  } catch (e) {
+    handleError(res, e);
+  }
+};
+
+const handleUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
+  try {
+    const { id } = req.query;
+
+    const { bleed_location, infusion_date, notes, treated_within } = req.body;
+
+    const { data: newlyUpdatedInfusion, error: updateInfusionError } =
+      await supabase
+        .from("infusion")
+        .update({
+          bleed_location,
+          infusion_date,
+          notes,
+          treated_within,
+        })
+        .eq("id", id)
+        .select();
+
+    res.status(200).send({
+      newlyUpdatedInfusion,
+      updateInfusionError,
     });
   } catch (e) {
     handleError(res, e);

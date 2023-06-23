@@ -9,6 +9,7 @@ import { notifications } from "@mantine/notifications";
 import dayjs from "dayjs";
 
 import { authOptions } from "../../pages/api/auth/[...nextauth]";
+import { TrackInfusionForm } from "@/components/TrackInfusionForm";
 
 interface IProps {
   infusion: Infusion | null;
@@ -16,6 +17,7 @@ interface IProps {
 
 export default function ViewInfusion({ infusion }: IProps) {
   const [deleteIsLoading, setDeleteIsLoading] = useState(false);
+  const [updateIsLoading, setUpdateIsLoading] = useState(false);
 
   const handleDeleteInfusionByID = async () => {
     if (!infusion) {
@@ -46,6 +48,49 @@ export default function ViewInfusion({ infusion }: IProps) {
     setDeleteIsLoading(false);
   };
 
+  const handleUpdateInfusionByID = async (event: any) => {
+    event.preventDefault();
+
+    if (!infusion) {
+      return null;
+    }
+    const bleedLocation = event.target.bleed_location.value;
+    const infusionDate = event.target.infusion_date.value;
+    const treatedWithin = event.target.treated_within.checked;
+    const notes = event.target.notes.value;
+
+    setUpdateIsLoading(true);
+
+    const response = await fetch(`/api/infusions/${infusion.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        bleedLocation,
+        infusionDate,
+        treatedWithin,
+        notes,
+      }),
+    });
+
+    if (!response.ok) {
+      notifications.show({
+        title: "Something went wrong!",
+        message: "Please try again later.",
+        color: "red",
+        autoClose: 5000,
+      });
+    } else {
+      notifications.show({
+        title: "Success!",
+        message: "Infusion updated.",
+        color: "green",
+        autoClose: 5000,
+      });
+    }
+
+    setUpdateIsLoading(false);
+  };
+
   if (!infusion) {
     return (
       <>
@@ -56,14 +101,15 @@ export default function ViewInfusion({ infusion }: IProps) {
 
   return (
     <>
-      <Title className="mb-4">View Infusion</Title>
-      <Text>ID: {infusion.id}</Text>
-      <Text>
-        Infusion Date:{" "}
-        {dayjs(infusion.infusion_date).format("MM/DD/YYYY h:mmA")}
-      </Text>
-      <Text>Bleed Location: {infusion.bleed_location}</Text>
-      <Text>Notes: {infusion.notes || "n/a"}</Text>
+      <Title className="mb-2">View Infusion</Title>
+      <Text className="mb-4 font-bold text-green-400">ID: {infusion.id}</Text>
+      <TrackInfusionForm
+        handleSubmit={handleUpdateInfusionByID}
+        uniqueBleedLocations={[]}
+        formIsLoading={updateIsLoading}
+        currentValues={infusion}
+      />
+
       <div className="my-4">
         <Button
           variant="outline"
