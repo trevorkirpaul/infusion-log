@@ -31,10 +31,8 @@ const InnerFooter: FC = () => {
           />
         </Link>
       </MediaQuery>
-      {/* For Mobile Menu */}
-      <MediaQuery largerThan="md" styles={{ display: "none" }}>
-        <MobileBottomMenu />
-      </MediaQuery>
+      {/* For Mobile Menu - responsive in component */}
+      <MobileBottomMenu />
     </>
   );
 };
