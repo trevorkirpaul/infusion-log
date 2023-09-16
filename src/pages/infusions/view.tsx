@@ -4,12 +4,43 @@ import type { Infusion } from "@/utils/types";
 import InfusionTable from "@/components/InfusionTable";
 import { authOptions } from "../../pages/api/auth/[...nextauth]";
 import { getServerSession } from "next-auth/next";
-import { Pagination, Select, Group, Title, MediaQuery } from "@mantine/core";
+import {
+  Affix,
+  Button,
+  Transition,
+  rem,
+  Pagination,
+  Select,
+  Group,
+  Title,
+  MediaQuery,
+} from "@mantine/core";
 import { useRouter } from "next/router";
 import { getUniqueBleedLocations } from "@/utils/getUniqueBleedLocations";
 import { NotSignedInCard } from "@/components/NotSignedInCard";
+import { ParsedUrlQuery } from "querystring";
+import { useWindowScroll } from "@mantine/hooks";
+import { IconArrowUp } from "@tabler/icons-react";
 
 const createPageHref = (page: number) => `?page=${page}`;
+
+const getParamFor = (
+  q: "bleed_location" | "count" | "page",
+  parsedURLQuery: ParsedUrlQuery
+) => {
+  const foundQuery = parsedURLQuery[q];
+  if (!foundQuery) return "";
+  switch (q) {
+    case "bleed_location":
+      return `&bleed_location=${foundQuery}`;
+    case "page":
+      return `&page=${foundQuery}`;
+    case "count":
+      return `&count=${foundQuery}`;
+    default:
+      return "";
+  }
+};
 
 interface IProps {
   infusions: Infusion[];
@@ -24,6 +55,7 @@ export default function ViewInfusions({
   uniqueBleedLocations,
   userID,
 }: IProps) {
+  const [scroll, scrollTo] = useWindowScroll();
   const router = useRouter();
   const { page: currentPage } = router.query;
   if (!userID) {
@@ -35,6 +67,23 @@ export default function ViewInfusions({
   }
   return (
     <>
+      <Affix position={{ bottom: rem(100), right: rem(20) }}>
+        <Transition transition="slide-up" mounted={scroll.y > 0}>
+          {(transitionStyles) => {
+            return (
+              <Button
+                variant="filled"
+                style={{ backgroundColor: "dodgerblue", ...transitionStyles }}
+                // color="grape"
+                leftIcon={<IconArrowUp size="1rem" />}
+                onClick={() => scrollTo({ y: 0 })}
+              >
+                Scroll to top
+              </Button>
+            );
+          }}
+        </Transition>
+      </Affix>
       <Title className="mb-4">View Infusions ({numberOfInfusions})</Title>
       <Select
         className="mb-4"
@@ -45,33 +94,75 @@ export default function ViewInfusions({
           const computedBleedLocationParam = computedBleedLocation
             ? `&bleed_location=${computedBleedLocation}`
             : "";
-          router.push(`${createPageHref(1)}${computedBleedLocationParam}`);
+          router.push(
+            `${createPageHref(1)}${getParamFor(
+              "count",
+              router.query
+            )}${computedBleedLocationParam}`
+          );
         }}
         clearable
-        label="Filter by bleed location"
+        label="Filter by bleed location:"
         placeholder="Pick one"
         data={uniqueBleedLocations.map((bleedLocation) => ({
           value: bleedLocation,
           label: bleedLocation,
         }))}
       />
+      <Select
+        className="mb-8"
+        label="Items Per Page:"
+        placeholder="Pick one"
+        defaultValue={
+          typeof router.query.count === "string" ? router.query.count : "5"
+        }
+        data={[
+          { value: "5", label: "5" },
+          { value: "10", label: "10" },
+          { value: "25", label: "25" },
+        ]}
+        onChange={(selection) => {
+          router.push(
+            `?${getParamFor("page", router.query)}${getParamFor(
+              "bleed_location",
+              router.query
+            )}&count=${selection}`
+          );
+        }}
+      />
       <Group align="center" position="apart" className="mb-4">
         <Pagination
           value={currentPage ? Number(currentPage) : 1}
           onChange={(page) => {
-            router.push(createPageHref(page));
+            router.push(
+              `${createPageHref(page)}${getParamFor(
+                "bleed_location",
+                router.query
+              )}${getParamFor("count", router.query)}`
+            );
           }}
-          total={Math.ceil(numberOfInfusions / 4)}
+          total={Math.ceil(
+            numberOfInfusions /
+              (router.query.count ? Number(router.query.count) - 1 : 4)
+          )}
         />
       </Group>
       <InfusionTable infusions={infusions} />
       <Pagination
-        className="mt-4"
+        className="mt-4 mb-10"
         value={currentPage ? Number(currentPage) : 1}
         onChange={(page) => {
-          router.push(createPageHref(page));
+          router.push(
+            `${createPageHref(page)}${getParamFor(
+              "bleed_location",
+              router.query
+            )}${getParamFor("count", router.query)}`
+          );
         }}
-        total={Math.ceil(numberOfInfusions / 4)}
+        total={Math.ceil(
+          numberOfInfusions /
+            (router.query.count ? Number(router.query.count) - 1 : 4)
+        )}
       />
     </>
   );
@@ -80,8 +171,8 @@ export default function ViewInfusions({
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getServerSession(ctx.req, ctx.res, authOptions);
   const userID = session?.user?.id;
-  const { page, bleed_location = null } = ctx.query;
-  const range = getRange(page);
+  const { page, bleed_location = null, count } = ctx.query;
+  const range = getRange(page, Number(count || 5));
 
   const { count: numberOfInfusions, data } = await supabase
     .from("infusion")
@@ -112,11 +203,13 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   };
 };
 
-const getRange = (page: string | string[] | undefined) => {
+const getRange = (page: string | string[] | undefined, count: number = 0) => {
   const safePage = page ? Number(page) - 1 : 0;
+
   if (safePage < 0) return { start: 0, end: 4 };
-  const start = safePage * 4;
-  const end = start + 4;
+
+  const start = safePage * count;
+  const end = start + count - 1;
 
   return { start, end };
 };
