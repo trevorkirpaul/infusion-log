@@ -34,10 +34,12 @@ export default function TrackInfusion(props: IProps) {
 
     setFormIsLoading(true);
 
-    const bleedLocation = event.target.bleed_location.value;
+    const bleedLocation = event.target.bleed_location.value
+      .toLowerCase()
+      .trim();
     const infusionDate = event.target.infusion_date[1].value;
     const treatedWithin = event.target.treated_within.checked;
-    const notes = event.target.notes.value;
+    const notes = event.target.notes.value.trim();
 
     const body = {
       bleedLocation,
