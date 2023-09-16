@@ -1,5 +1,5 @@
 import HomeActionCard from "@/components/HomeActionCard";
-import { Grid, Text, Card, Divider, SimpleGrid, Title } from "@mantine/core";
+import { Badge, Text, Card, Divider, SimpleGrid, Title } from "@mantine/core";
 import { supabase } from "@/utils/supabase";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../pages/api/auth/[...nextauth]";
@@ -13,22 +13,6 @@ import {
   getInfusionsByBleedLocation,
 } from "@/utils/getInfusionDataForChart";
 import { useMediaQuery } from "@mantine/hooks";
-
-const content = {
-  track: {
-    body: "Track your infusions here.",
-    buttonLabel: "Track Infusion",
-  },
-  view: {
-    body: "View your infusions here.",
-    buttonLabel: "View Infusions",
-  },
-};
-
-const responsePropsForGridCols = {
-  md: 6,
-  lg: 3,
-};
 
 const getBleedDataForIdx = (
   bleedLocationStats: IProps["bleedLocationStats"],
@@ -51,6 +35,7 @@ interface IProps {
   userID?: string;
   infusionDataForChart: [string, number][];
   infusionsByBleedLocation: [string, number][];
+  allBleedCount?: number | null;
 }
 
 export default function Home({
@@ -59,6 +44,7 @@ export default function Home({
   userID,
   infusionDataForChart,
   infusionsByBleedLocation,
+  allBleedCount,
 }: IProps) {
   const matchesMobile = useMediaQuery("(max-width: 800px)");
 
@@ -81,54 +67,52 @@ export default function Home({
 
       {bleedLocationStats && targetBleedLocation ? (
         <Card className="mb-8">
-          <Text>
-            <span className={boldText}>Primary Target Bleed Location:</span>{" "}
-            {targetBleedLocation.bleedLocation}
-          </Text>
-          <Text>
-            <span className={boldText}>Number of target bleeds:</span>{" "}
-            {targetBleedLocation.count}
-          </Text>
+          <div className="mb-3">
+            <Text className="mb-3 font-bold">
+              Primary Target Bleed Location:
+            </Text>
+            <Badge size="lg" color="red">
+              {targetBleedLocation.bleedLocation}: {targetBleedLocation.count}
+            </Badge>
+          </div>
+
+          <Text className="mb-3 font-bold">Total Bleeds Tracked:</Text>
+          <Badge size="lg" color="blue">
+            {allBleedCount}
+          </Badge>
+
           <Divider my="sm" />
-          <Text>
-            <span className={boldText}>Top Bleed Locations:</span>{" "}
-            {[0, 1, 2].map((idx) => {
-              const l = getBleedDataForIdx(
-                bleedLocationStats,
-                idx
-              )?.bleedLocation;
-              return (
-                <span key={l}>
-                  {l}
-                  {idx !== 2 && ", "}
-                </span>
-              );
-            })}
-          </Text>
+          <Text className="font-bold mb-3">Top Bleed Location(s):</Text>
+          {[0, 1, 2].map((idx) => {
+            const l = getBleedDataForIdx(
+              bleedLocationStats,
+              idx
+            )?.bleedLocation;
+
+            if (!l) {
+              return null;
+            }
+
+            const getColor = (_idx) => {
+              switch (_idx) {
+                case 2:
+                  return "yellow";
+                case 1:
+                  return "orange";
+                default:
+                  return "red";
+              }
+            };
+
+            return (
+              <Badge key={l} className="mr-3" size="lg" color={getColor(idx)}>
+                {l}
+              </Badge>
+            );
+          })}
         </Card>
       ) : null}
-      {/* <Title className="mb-5">Actions</Title> */}
 
-      {/* <Grid>
-        <Grid.Col {...responsePropsForGridCols}>
-          <HomeActionCard
-            title="Track Infusion"
-            body={content.track.body}
-            buttonLabel={content.track.buttonLabel}
-            href="/infusions/track"
-            color="pink"
-          />
-        </Grid.Col>
-        <Grid.Col {...responsePropsForGridCols}>
-          <HomeActionCard
-            title="View Infusions"
-            body={content.view.body}
-            buttonLabel={content.view.buttonLabel}
-            href="/infusions/view"
-            color="green"
-          />
-        </Grid.Col>
-      </Grid> */}
       <Title className="my-5">Stats</Title>
       {bleedLocationStats && targetBleedLocation ? (
         <SimpleGrid cols={matchesMobile ? 1 : 2}>
@@ -153,11 +137,14 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getServerSession(ctx.req, ctx.res, authOptions);
   const userID = session?.user?.id;
 
-  const { data: allBleedLocations, error: allBleedLocationsError } =
-    await supabase
-      .from("infusion")
-      .select("bleed_location")
-      .eq("user_id", userID);
+  const {
+    data: allBleedLocations,
+    error: allBleedLocationsError,
+    count: allBleedCount,
+  } = await supabase
+    .from("infusion")
+    .select("bleed_location", { count: "exact" })
+    .eq("user_id", userID);
 
   const bleedLocationStats = getBleedLocationStats({
     allBleedLocations,
@@ -195,6 +182,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       userID: userID || null,
       infusionDataForChart: _infusionDataForChart,
       infusionsByBleedLocation: topThree,
+      allBleedCount,
     },
   };
 };
