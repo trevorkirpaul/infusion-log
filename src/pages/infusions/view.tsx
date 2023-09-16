@@ -4,11 +4,23 @@ import type { Infusion } from "@/utils/types";
 import InfusionTable from "@/components/InfusionTable";
 import { authOptions } from "../../pages/api/auth/[...nextauth]";
 import { getServerSession } from "next-auth/next";
-import { Pagination, Select, Group, Title, MediaQuery } from "@mantine/core";
+import {
+  Affix,
+  Button,
+  Transition,
+  rem,
+  Pagination,
+  Select,
+  Group,
+  Title,
+  MediaQuery,
+} from "@mantine/core";
 import { useRouter } from "next/router";
 import { getUniqueBleedLocations } from "@/utils/getUniqueBleedLocations";
 import { NotSignedInCard } from "@/components/NotSignedInCard";
 import { ParsedUrlQuery } from "querystring";
+import { useWindowScroll } from "@mantine/hooks";
+import { IconArrowUp } from "@tabler/icons-react";
 
 const createPageHref = (page: number) => `?page=${page}`;
 
@@ -43,6 +55,7 @@ export default function ViewInfusions({
   uniqueBleedLocations,
   userID,
 }: IProps) {
+  const [scroll, scrollTo] = useWindowScroll();
   const router = useRouter();
   const { page: currentPage } = router.query;
   if (!userID) {
@@ -54,6 +67,23 @@ export default function ViewInfusions({
   }
   return (
     <>
+      <Affix position={{ bottom: rem(100), right: rem(20) }}>
+        <Transition transition="slide-up" mounted={scroll.y > 0}>
+          {(transitionStyles) => {
+            return (
+              <Button
+                variant="filled"
+                style={{ backgroundColor: "dodgerblue", ...transitionStyles }}
+                // color="grape"
+                leftIcon={<IconArrowUp size="1rem" />}
+                onClick={() => scrollTo({ y: 0 })}
+              >
+                Scroll to top
+              </Button>
+            );
+          }}
+        </Transition>
+      </Affix>
       <Title className="mb-4">View Infusions ({numberOfInfusions})</Title>
       <Select
         className="mb-4"
@@ -83,7 +113,9 @@ export default function ViewInfusions({
         className="mb-8"
         label="Items Per Page:"
         placeholder="Pick one"
-        defaultValue="5"
+        defaultValue={
+          typeof router.query.count === "string" ? router.query.count : "5"
+        }
         data={[
           { value: "5", label: "5" },
           { value: "10", label: "10" },
@@ -117,7 +149,7 @@ export default function ViewInfusions({
       </Group>
       <InfusionTable infusions={infusions} />
       <Pagination
-        className="mt-4"
+        className="mt-4 mb-10"
         value={currentPage ? Number(currentPage) : 1}
         onChange={(page) => {
           router.push(
