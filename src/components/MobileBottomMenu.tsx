@@ -1,19 +1,13 @@
 import { FC } from "react";
 import { Button, MediaQuery } from "@mantine/core";
-import Link from "next/link";
 import { useRouter } from "next/router";
-import { useDisclosure } from "@mantine/hooks";
-import { TrackModal } from "./TrackModal";
 
 export const MobileBottomMenu: FC = () => {
-  const [opened, { open, close }] = useDisclosure(false);
-
   const router = useRouter();
   const buttonVariant = "default";
   return (
     <MediaQuery largerThan="md" styles={{ display: "none" }}>
       <div>
-        <TrackModal opened={opened} close={close} />
         <Button.Group>
           <Button
             onClick={() => router.push("/")}
@@ -29,7 +23,11 @@ export const MobileBottomMenu: FC = () => {
           >
             Reports
           </Button>
-          <Button onClick={open} variant={buttonVariant} color="gray">
+          <Button
+            onClick={() => router.push("/infusions/track")}
+            variant={buttonVariant}
+            color="gray"
+          >
             Track
           </Button>
           <Button

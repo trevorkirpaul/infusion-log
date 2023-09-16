@@ -33,14 +33,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     >
       <Notifications />
       <AppShell
-        padding="md"
+        padding="xl"
         navbar={
           <Navbar
             className="h-full"
             hidden={!opened}
-            width={{ sm: 200, lg: 300 }}
+            width={{ md: 200, lg: 300 }}
             p="xs"
-            hiddenBreakpoint="sm"
+            hiddenBreakpoint="md"
           >
             <SideBar handleCloseBurgerMenu={handleCloseBurgerMenu} />
           </Navbar>
