@@ -54,10 +54,12 @@ export default function ViewInfusion({ infusion }: IProps) {
     if (!infusion) {
       return null;
     }
-    const bleedLocation = event.target.bleed_location.value;
-    const infusionDate = event.target.infusion_date.value;
-    const treatedWithin = event.target.treated_within.checked;
-    const notes = event.target.notes.value;
+    const bleed_location = event.target.bleed_location.value
+      .toLowerCase()
+      .trim();
+    const infusion_date = event.target.infusion_date[1].value;
+    const treated_within = event.target.treated_within.checked;
+    const notes = event.target.notes.value.trim();
 
     setUpdateIsLoading(true);
 
@@ -65,9 +67,9 @@ export default function ViewInfusion({ infusion }: IProps) {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        bleedLocation,
-        infusionDate,
-        treatedWithin,
+        bleed_location,
+        infusion_date,
+        treated_within,
         notes,
       }),
     });
