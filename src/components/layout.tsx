@@ -33,7 +33,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     >
       <Notifications />
       <AppShell
-        padding="md"
+        padding="xl"
         navbar={
           <Navbar
             className="h-full"

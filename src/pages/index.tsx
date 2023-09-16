@@ -107,9 +107,9 @@ export default function Home({
           </Text>
         </Card>
       ) : null}
-      <Title className="mb-5">Actions</Title>
+      {/* <Title className="mb-5">Actions</Title> */}
 
-      <Grid>
+      {/* <Grid>
         <Grid.Col {...responsePropsForGridCols}>
           <HomeActionCard
             title="Track Infusion"
@@ -128,7 +128,7 @@ export default function Home({
             color="green"
           />
         </Grid.Col>
-      </Grid>
+      </Grid> */}
       <Title className="my-5">Stats</Title>
       {bleedLocationStats && targetBleedLocation ? (
         <SimpleGrid cols={matchesMobile ? 1 : 2}>
