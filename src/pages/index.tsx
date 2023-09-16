@@ -93,7 +93,7 @@ export default function Home({
               return null;
             }
 
-            const getColor = (_idx) => {
+            const getColor = (_idx: number) => {
               switch (_idx) {
                 case 2:
                   return "yellow";
