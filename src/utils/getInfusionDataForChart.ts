@@ -1,14 +1,5 @@
-import { SupabaseClient } from "@supabase/supabase-js";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import dayjs from "dayjs";
-
-type Labels = string[];
-
-type Return = {
-  label: string;
-  data: {}[];
-  borderColor: string;
-  backgroundColor: string;
-};
 
 interface IGetInfusionDataForChart {
   userId: string;
