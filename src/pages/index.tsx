@@ -1,5 +1,4 @@
-import HomeActionCard from "@/components/HomeActionCard";
-import { Badge, Text, Card, Divider, SimpleGrid, Title } from "@mantine/core";
+import { Badge, Text, Card, Divider, SimpleGrid, Flex } from "@mantine/core";
 import { supabase } from "@/utils/supabase";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../pages/api/auth/[...nextauth]";
@@ -63,7 +62,7 @@ export default function Home({
 
   return (
     <>
-      <h1 className="text-4xl font-bold mb-8">{title}</h1>
+      <h1 className="text-2xl font-bold mb-8">{title}</h1>
 
       {bleedLocationStats && targetBleedLocation ? (
         <Card className="mb-8">
@@ -83,37 +82,40 @@ export default function Home({
 
           <Divider my="sm" />
           <Text className="font-bold mb-3">Top Bleed Location(s):</Text>
-          {[0, 1, 2].map((idx) => {
-            const l = getBleedDataForIdx(
-              bleedLocationStats,
-              idx
-            )?.bleedLocation;
-
-            if (!l) {
-              return null;
-            }
-
-            const getColor = (_idx: number) => {
-              switch (_idx) {
-                case 2:
-                  return "yellow";
-                case 1:
-                  return "orange";
-                default:
-                  return "red";
+          <Flex direction={{ base: "column", sm: "row" }} rowGap={10}>
+            {[0, 1, 2].map((idx) => {
+              const l = getBleedDataForIdx(
+                bleedLocationStats,
+                idx
+              )?.bleedLocation;
+              if (!l) {
+                return null;
               }
-            };
-
-            return (
-              <Badge key={l} className="mr-3" size="lg" color={getColor(idx)}>
-                {l}
-              </Badge>
-            );
-          })}
+              const getColor = (_idx: number) => {
+                switch (_idx) {
+                  case 2:
+                    return "yellow";
+                  case 1:
+                    return "orange";
+                  default:
+                    return "red";
+                }
+              };
+              return (
+                <Badge
+                  key={l}
+                  className="mr-0 md:mr-3 w-fit"
+                  size="lg"
+                  color={getColor(idx)}
+                >
+                  {l}
+                </Badge>
+              );
+            })}
+          </Flex>
         </Card>
       ) : null}
 
-      <Title className="my-5">Stats</Title>
       {bleedLocationStats && targetBleedLocation ? (
         <SimpleGrid cols={matchesMobile ? 1 : 2}>
           <LineChart
