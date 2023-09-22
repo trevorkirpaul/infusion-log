@@ -1,5 +1,5 @@
 import React from "react";
-import { NumberInput } from "@mantine/core";
+import { NumberInput, Checkbox } from "@mantine/core";
 import { DateTimePicker } from "@mantine/dates";
 import type { FactorOrder } from "@/utils/types";
 
@@ -49,6 +49,16 @@ export const OrderForm: React.FC<IProps> = ({
         name="order_placed_at"
         withAsterisk
         radius="xs"
+        size="md"
+      />
+      <Checkbox
+        className="mb-10"
+        description="If the order has already arrived, check this box. If you are still waiting on this order to arrive then leave it unchecked."
+        labelPosition="left"
+        label="Order has arrived"
+        defaultChecked={false}
+        id="arrived"
+        name="arrived"
         size="md"
       />
       <button

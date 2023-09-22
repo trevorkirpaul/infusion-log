@@ -29,7 +29,12 @@ const handlePost = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const { body } = req;
 
-    if (!body.quantity || !body.doses_on_hand || !body.order_placed_at) {
+    if (
+      !body.quantity ||
+      !body.doses_on_hand ||
+      !body.order_placed_at ||
+      !body.userID
+    ) {
       return res.status(400).send("missing values required");
     }
 
@@ -39,6 +44,8 @@ const handlePost = async (req: NextApiRequest, res: NextApiResponse) => {
         quantity: body.quantity,
         doses_on_hand: body.doses_on_hand,
         order_placed_at: body.order_placed_at,
+        user_id: body.userID,
+        arrived: body.arrived || false,
       })
       .select();
 

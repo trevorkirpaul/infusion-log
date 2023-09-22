@@ -4,6 +4,9 @@ import { Breadcrumbs, Anchor } from "@mantine/core";
 import { useSession } from "next-auth/react";
 import { notifications } from "@mantine/notifications";
 import { IconCircleXFilled } from "@tabler/icons-react";
+import { GetServerSideProps } from "next";
+import { authOptions } from "../../pages/api/auth/[...nextauth]";
+import { getServerSession } from "next-auth/next";
 
 const breadcrumbItems = [
   { title: "Home", href: "/" },
@@ -15,7 +18,11 @@ const breadcrumbItems = [
   </Anchor>
 ));
 
-export default function Orders() {
+interface IProps {
+  userID: any;
+}
+
+export default function Orders({ userID }: IProps) {
   const { status, data } = useSession();
   const [formIsLoading, setFormIsLoading] = useState(false);
 
@@ -35,12 +42,14 @@ export default function Orders() {
 
     setFormIsLoading(true);
 
-    const { quantity, doses_on_hand, order_placed_at } = event.target;
+    const { quantity, doses_on_hand, order_placed_at, arrived } = event.target;
 
     const body = {
       quantity: quantity.value,
       doses_on_hand: doses_on_hand.value,
       order_placed_at: order_placed_at[1].value,
+      userID,
+      arrived: arrived.checked,
     };
 
     const res = await fetch("/api/orders/create", {
@@ -79,3 +88,13 @@ export default function Orders() {
     </>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const session = await getServerSession(ctx.req, ctx.res, authOptions);
+  const userID = session?.user?.id;
+  return {
+    props: {
+      userID,
+    },
+  };
+};

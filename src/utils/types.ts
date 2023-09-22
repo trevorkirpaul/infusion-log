@@ -28,4 +28,6 @@ export interface FactorOrder {
   quantity: number;
   doses_on_hand: number;
   order_placed_at: string;
+  user_id: number;
+  arrived: boolean;
 }
