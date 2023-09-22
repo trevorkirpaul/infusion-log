@@ -21,3 +21,11 @@ export interface User {
   bleeding_disorder?: number;
   theme?: string;
 }
+
+export interface FactorOrder {
+  id: number;
+  created_at: string;
+  quantity: number;
+  doses_on_hand: number;
+  order_placed_at: string;
+}
