@@ -22,7 +22,6 @@ interface IProps {
 }
 
 export default function Orders({ orders }: IProps) {
-  console.log("orders", orders);
   return (
     <>
       <Breadcrumbs>{breadcrumbItems}</Breadcrumbs>

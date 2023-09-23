@@ -27,6 +27,7 @@ export const OrderForm: React.FC<IProps> = ({
         radius="xs"
         size="md"
         min={1}
+        defaultValue={currentValues?.quantity || ""}
       />
       <NumberInput
         className="mb-5"
@@ -39,24 +40,25 @@ export const OrderForm: React.FC<IProps> = ({
         radius="xs"
         size="md"
         min={0}
+        defaultValue={currentValues?.doses_on_hand || ""}
       />
       <DateTimePicker
         className="mb-10"
         label="Order Placed"
         description="Enter the date and time on which you placed the order. If you don't remember the exact time, you can enter the time you remember."
-        defaultValue={new Date(Date.now())}
         id="order_placed_at"
         name="order_placed_at"
         withAsterisk
         radius="xs"
         size="md"
+        defaultValue={new Date(currentValues?.order_placed_at || Date.now())}
       />
       <Checkbox
         className="mb-10"
         description="If the order has already arrived, check this box. If you are still waiting on this order to arrive then leave it unchecked."
         labelPosition="left"
         label="Order has arrived"
-        defaultChecked={false}
+        defaultChecked={currentValues?.arrived || false}
         id="arrived"
         name="arrived"
         size="md"
