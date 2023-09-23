@@ -1,22 +1,12 @@
 import { useState } from "react";
 import { OrderForm } from "@/components/OrderForm";
-import { Breadcrumbs, Anchor } from "@mantine/core";
 import { useSession } from "next-auth/react";
 import { notifications } from "@mantine/notifications";
 import { IconCircleXFilled } from "@tabler/icons-react";
 import { GetServerSideProps } from "next";
 import { authOptions } from "../../pages/api/auth/[...nextauth]";
 import { getServerSession } from "next-auth/next";
-
-const breadcrumbItems = [
-  { title: "Home", href: "/" },
-  { title: "Orders", href: "/orders" },
-  { title: "Create New Order", href: "/orders/create" },
-].map((item, index) => (
-  <Anchor href={item.href} key={index}>
-    {item.title}
-  </Anchor>
-));
+import { Breadcrumbs } from "@/components/BreadCrumbs";
 
 interface IProps {
   userID: any;
@@ -81,7 +71,13 @@ export default function Orders({ userID }: IProps) {
 
   return (
     <>
-      <Breadcrumbs>{breadcrumbItems}</Breadcrumbs>
+      <Breadcrumbs
+        crumbs={[
+          { title: "Home", href: "/" },
+          { title: "Orders", href: "/orders" },
+          { title: "Create New Order", href: "/orders/create" },
+        ]}
+      />
 
       <h1>Create Order</h1>
       <OrderForm handleSubmit={handleSubmit} formIsLoading={formIsLoading} />

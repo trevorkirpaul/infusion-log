@@ -1,23 +1,13 @@
 import { OrderForm } from "@/components/OrderForm";
 import { FactorOrder } from "@/utils/types";
-import { Title, Breadcrumbs, Anchor, Button } from "@mantine/core";
+import { Title, Button } from "@mantine/core";
 import { GetServerSideProps } from "next";
 import { supabase } from "@/utils/supabase";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../api/auth/[...nextauth]";
 import { useState } from "react";
 import { notifications } from "@mantine/notifications";
-
-const breadcrumbItems = (orderID: number | null | undefined) =>
-  [
-    { title: "Home", href: "/" },
-    { title: "Orders", href: "/orders" },
-    { title: orderID, href: `/orders/${orderID}` },
-  ].map((item, index) => (
-    <Anchor href={item.href} key={index}>
-      {item.title}
-    </Anchor>
-  ));
+import { Breadcrumbs } from "@/components/BreadCrumbs";
 
 interface IProps {
   order: FactorOrder | null;
@@ -96,7 +86,13 @@ export default function ViewOrder({ userID, order }: IProps) {
 
   return (
     <div>
-      <Breadcrumbs mb={10}>{breadcrumbItems(order?.id)}</Breadcrumbs>
+      <Breadcrumbs
+        crumbs={[
+          { title: "Home", href: "/" },
+          { title: "Orders", href: "/orders" },
+          { title: order?.id || "?", href: `/orders/${order?.id}` },
+        ]}
+      />
 
       <Title mb={10}>View/Update Order</Title>
       <OrderForm

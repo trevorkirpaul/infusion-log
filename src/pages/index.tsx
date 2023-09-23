@@ -12,6 +12,7 @@ import {
   getInfusionsByBleedLocation,
 } from "@/utils/getInfusionDataForChart";
 import { useMediaQuery } from "@mantine/hooks";
+import { Breadcrumbs } from "@/components/BreadCrumbs";
 
 const getBleedDataForIdx = (
   bleedLocationStats: IProps["bleedLocationStats"],
@@ -62,6 +63,7 @@ export default function Home({
 
   return (
     <>
+      <Breadcrumbs crumbs={[{ title: "Home", href: "/" }]} />
       <h1 className="text-2xl font-bold mb-8">{title}</h1>
 
       {bleedLocationStats && targetBleedLocation ? (
