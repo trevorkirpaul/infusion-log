@@ -13,9 +13,10 @@ import { TrackInfusionForm } from "@/components/TrackInfusionForm";
 
 interface IProps {
   infusion: Infusion | null;
+  userID: string | null;
 }
 
-export default function ViewInfusion({ infusion }: IProps) {
+export default function ViewInfusion({ infusion, userID }: IProps) {
   const [deleteIsLoading, setDeleteIsLoading] = useState(false);
   const [updateIsLoading, setUpdateIsLoading] = useState(false);
 
@@ -27,6 +28,10 @@ export default function ViewInfusion({ infusion }: IProps) {
     setDeleteIsLoading(true);
     const response = await fetch(`/api/infusions/${infusion.id}`, {
       method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userID,
+      }),
     });
 
     if (!response.ok) {
@@ -71,6 +76,7 @@ export default function ViewInfusion({ infusion }: IProps) {
         infusion_date,
         treated_within,
         notes,
+        userID,
       }),
     });
 
@@ -148,6 +154,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   return {
     props: {
       infusion: data ? data[0] : null,
+      userID: userID || null,
     },
   };
 };
