@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Title, Button } from "@mantine/core";
+import { Title, Button, Text } from "@mantine/core";
 import { OrderTimeline } from "@/components/OrderTimeline.tsx";
 import { getServerSession } from "next-auth/next";
 import { GetServerSideProps } from "next";
@@ -24,6 +24,11 @@ export default function Orders({ orders, infusionsByOrder }: IProps) {
         ]}
       />
       <Title mb={20}>Orders</Title>
+
+      <Text mb={20}>
+        All of your Factor Orders will be listed below in a timeline. You can
+        view each infusion within each Factor Order as well!
+      </Text>
 
       <Link className="mb-10 inline-block" href="/orders/create">
         <Button variant="outline" color="blue">

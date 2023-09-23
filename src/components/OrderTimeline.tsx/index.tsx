@@ -4,6 +4,7 @@ import { FactorOrder, InfusionByOrder } from "@/utils/types";
 import { IconClockHour3, IconCircleCheck } from "@tabler/icons-react";
 import dayjs from "dayjs";
 import Link from "next/link";
+import { InfusionsForOrder } from "./InfusionsForOrder";
 
 interface IProps {
   orders: FactorOrder[];
@@ -37,21 +38,24 @@ export const OrderTimeline: React.FC<IProps> = ({
                   {o.arrived ? "Yes" : "No"}
                 </Text>
               </Text>
+              <Text c="dimmed" size="sm" mt={4}>
+                Ordered On:{" "}
+                {dayjs(o.order_placed_at).format("MM/DD/YYYY h:mmA")}
+              </Text>
               <Text c="dimmed" size="sm" mt={12}>
                 {o.doses_on_hand} doses were on hand at the time of this order.
               </Text>
-              <Text mt={4} size="sm" c="dimmed">
-                {numberOfInfusionsTaken} infusions(s) taken during this order
-              </Text>
 
-              <Text c="dimmed" size="sm" mt={8}>
-                {dayjs(o.order_placed_at).format("MM/DD/YYYY h:mmA")}
-              </Text>
+              <InfusionsForOrder
+                orderID={o.id}
+                infusionsByOrder={infusionsByOrder}
+              />
+
               <Link
                 className="mt-4 text-blue-400 border rounded border-gray-600 py-1 px-2 inline-block hover:text-blue-200 hover:border-blue-200"
                 href={`/orders/${o.id}`}
               >
-                View / Edit
+                View / Edit Order
               </Link>
             </Timeline.Item>
           );

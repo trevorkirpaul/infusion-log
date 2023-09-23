@@ -36,4 +36,5 @@ export interface InfusionByOrder {
   order_id: number;
   infusion_id: number;
   user_id: number;
+  infusion_date: string;
 }

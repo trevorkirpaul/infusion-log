@@ -6,7 +6,7 @@ import { supabase } from "@/utils/supabase";
 import type { Infusion } from "@/utils/types";
 import { useState } from "react";
 import { notifications } from "@mantine/notifications";
-import dayjs from "dayjs";
+import { Breadcrumbs } from "@/components/BreadCrumbs";
 
 import { authOptions } from "../../pages/api/auth/[...nextauth]";
 import { TrackInfusionForm } from "@/components/TrackInfusionForm";
@@ -103,6 +103,13 @@ export default function ViewInfusion({ infusion }: IProps) {
 
   return (
     <>
+      <Breadcrumbs
+        crumbs={[
+          { title: "Home", href: "/" },
+          { title: "Infusions", href: "/infusions/view" },
+          { title: infusion.id, href: `/infusions/${infusion.id}` },
+        ]}
+      />
       <Title className="mb-2">View Infusion</Title>
       <Text className="mb-4 font-bold text-green-400">ID: {infusion.id}</Text>
       <TrackInfusionForm
