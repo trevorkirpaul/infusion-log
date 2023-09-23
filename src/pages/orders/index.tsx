@@ -1,11 +1,12 @@
 import Link from "next/link";
-import { Breadcrumbs, Anchor } from "@mantine/core";
+import { Breadcrumbs, Anchor, Title, Button } from "@mantine/core";
 import { OrderTimeline } from "@/components/OrderTimeline.tsx";
 import { getServerSession } from "next-auth/next";
 import { GetServerSideProps } from "next";
 import { supabase } from "@/utils/supabase";
 import { authOptions } from "../../pages/api/auth/[...nextauth]";
 import { FactorOrder } from "@/utils/types";
+import { IconPlus } from "@tabler/icons-react";
 
 const breadcrumbItems = [
   { title: "Home", href: "/" },
@@ -24,13 +25,14 @@ interface IProps {
 export default function Orders({ orders }: IProps) {
   return (
     <>
-      <Breadcrumbs>{breadcrumbItems}</Breadcrumbs>
-      <h1 className="mb-5">Orders</h1>
-      <ul className="mb-10">
-        <li>
-          <Link href="/orders/create">Create New Order</Link>
-        </li>
-      </ul>
+      <Breadcrumbs mb={5}>{breadcrumbItems}</Breadcrumbs>
+      <Title mb={20}>Orders</Title>
+
+      <Link className="mb-10 inline-block" href="/orders/create">
+        <Button variant="outline" color="blue">
+          <IconPlus className="mr-5" /> Create New Order
+        </Button>
+      </Link>
 
       <OrderTimeline orders={orders} />
     </>

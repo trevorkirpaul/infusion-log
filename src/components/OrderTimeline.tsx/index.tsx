@@ -32,7 +32,7 @@ export const OrderTimeline: React.FC<IProps> = ({ orders }) => {
                   {o.arrived ? "Yes" : "No"}
                 </Text>
               </Text>
-              <Text c="dimmed" size="sm" mt={4}>
+              <Text c="dimmed" size="sm" my={8}>
                 {dayjs(o.order_placed_at).format("MM/DD/YYYY h:mmA")}
               </Text>
               <Link className="text-blue-400" href={`/orders/${o.id}`}>

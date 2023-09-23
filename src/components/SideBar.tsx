@@ -46,6 +46,17 @@ export default function SideBar({ handleCloseBurgerMenu }: IProps) {
           </Link>
         </li>
         <li>
+          <Link href="/orders">
+            <NavLink
+              onClick={handleCloseBurgerMenu}
+              label="Orders"
+              rightSection={<IconChevronRight size="0.8rem" stroke={1.5} />}
+              active={router.pathname === "/orders"}
+              color="cyan"
+            />
+          </Link>
+        </li>
+        <li>
           <Link href="/report">
             <NavLink
               onClick={handleCloseBurgerMenu}
