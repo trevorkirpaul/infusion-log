@@ -24,6 +24,10 @@ export default function ViewOrder({ userID, order }: IProps) {
     setDeleteIsLoading(true);
     const response = await fetch(`/api/orders/${order.id}`, {
       method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userID,
+      }),
     });
 
     if (!response.ok) {
