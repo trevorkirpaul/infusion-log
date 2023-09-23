@@ -19,14 +19,10 @@ export const OrderTimeline: React.FC<IProps> = ({
     <>
       <Timeline active={orders.length - 1} bulletSize={24} lineWidth={2}>
         {orders.map((o) => {
-          const numberOfInfusionsTaken = infusionsByOrder.filter(
-            (x) => x.order_id === o.id
-          ).length;
-
           return (
             <Timeline.Item
               bullet={o.arrived ? <IconCircleCheck /> : <IconClockHour3 />}
-              title={`${o.quantity} ordered`}
+              title={`${o.quantity} dose(s) ordered`}
               color={o.arrived ? "green" : "yellow"}
             >
               <Text size="sm" mt={4}>
