@@ -1,32 +1,28 @@
-import { useRouter } from "next/router";
-import { Title, Text, Button } from "@mantine/core";
+import { OrderForm } from "@/components/OrderForm";
+import { FactorOrder } from "@/utils/types";
+import { Title, Button } from "@mantine/core";
 import { GetServerSideProps } from "next";
-import { getServerSession } from "next-auth/next";
 import { supabase } from "@/utils/supabase";
-import type { Infusion } from "@/utils/types";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "../api/auth/[...nextauth]";
 import { useState } from "react";
 import { notifications } from "@mantine/notifications";
 import { Breadcrumbs } from "@/components/BreadCrumbs";
 
-import { authOptions } from "../../pages/api/auth/[...nextauth]";
-import { TrackInfusionForm } from "@/components/TrackInfusionForm";
-
 interface IProps {
-  infusion: Infusion | null;
-  userID: string | null;
+  order: FactorOrder | null;
+  userID: any;
 }
 
-export default function ViewInfusion({ infusion, userID }: IProps) {
+export default function ViewOrder({ userID, order }: IProps) {
   const [deleteIsLoading, setDeleteIsLoading] = useState(false);
   const [updateIsLoading, setUpdateIsLoading] = useState(false);
 
-  const handleDeleteInfusionByID = async () => {
-    if (!infusion) {
-      return null;
-    }
+  const handleDeleteOrderByID = async () => {
+    if (!order) return null;
 
     setDeleteIsLoading(true);
-    const response = await fetch(`/api/infusions/${infusion.id}`, {
+    const response = await fetch(`/api/orders/${order.id}`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -44,39 +40,32 @@ export default function ViewInfusion({ infusion, userID }: IProps) {
     } else {
       notifications.show({
         title: "Success!",
-        message: "Infusion deleted.",
+        message: "Factor Order deleted.",
         color: "green",
         autoClose: 5000,
       });
     }
-
     setDeleteIsLoading(false);
   };
 
-  const handleUpdateInfusionByID = async (event: any) => {
-    event.preventDefault();
+  const handleUpdateFactorOrderByID = async (e: any) => {
+    e.preventDefault();
 
-    if (!infusion) {
-      return null;
-    }
-    const bleed_location = event.target.bleed_location.value
-      .toLowerCase()
-      .trim();
-    const infusion_date = event.target.infusion_date[1].value;
-    const treated_within = event.target.treated_within.checked;
-    const notes = event.target.notes.value.trim();
+    if (!order) return null;
 
     setUpdateIsLoading(true);
 
-    const response = await fetch(`/api/infusions/${infusion.id}`, {
+    const { quantity, doses_on_hand, order_placed_at, arrived } = e.target;
+
+    const response = await fetch(`/api/orders/${order.id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        bleed_location,
-        infusion_date,
-        treated_within,
-        notes,
+        quantity: quantity.value,
+        doses_on_hand: doses_on_hand.value,
+        order_placed_at: order_placed_at[1].value,
         userID,
+        arrived: arrived.checked,
       }),
     });
 
@@ -90,7 +79,7 @@ export default function ViewInfusion({ infusion, userID }: IProps) {
     } else {
       notifications.show({
         title: "Success!",
-        message: "Infusion updated.",
+        message: "Factor Order updated.",
         color: "green",
         autoClose: 5000,
       });
@@ -99,62 +88,52 @@ export default function ViewInfusion({ infusion, userID }: IProps) {
     setUpdateIsLoading(false);
   };
 
-  if (!infusion) {
-    return (
-      <>
-        <Text>no infusion found</Text>
-      </>
-    );
-  }
-
   return (
-    <>
+    <div>
       <Breadcrumbs
         crumbs={[
           { title: "Home", href: "/" },
-          { title: "Infusions", href: "/infusions/view" },
-          { title: infusion.id, href: `/infusions/${infusion.id}` },
+          { title: "Orders", href: "/orders" },
+          { title: order?.id || "?", href: `/orders/${order?.id}` },
         ]}
       />
-      <Title className="mb-2">View Infusion</Title>
-      <Text className="mb-4 font-bold text-green-400">ID: {infusion.id}</Text>
-      <TrackInfusionForm
-        handleSubmit={handleUpdateInfusionByID}
-        uniqueBleedLocations={[]}
-        formIsLoading={updateIsLoading}
-        currentValues={infusion}
-      />
 
+      <Title mb={10}>View/Update Order</Title>
+      <OrderForm
+        handleSubmit={handleUpdateFactorOrderByID}
+        formIsLoading={updateIsLoading}
+        currentValues={order}
+      />
       <div className="my-4">
         <Button
           variant="outline"
           color="red"
-          onClick={handleDeleteInfusionByID}
+          onClick={handleDeleteOrderByID}
           loading={deleteIsLoading}
           disabled={deleteIsLoading}
         >
           Delete Infusion
         </Button>
       </div>
-    </>
+    </div>
   );
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getServerSession(ctx.req, ctx.res, authOptions);
   const userID = session?.user?.id;
-  const { id: infusionID } = ctx.query;
+  const { id: orderID } = ctx.query;
 
   const { data } = await supabase
-    .from("infusion")
+    .from("factor_order")
     .select("*")
-    .eq("id", infusionID)
+    .eq("id", orderID)
     .eq("user_id", userID);
 
   return {
     props: {
-      infusion: data ? data[0] : null,
-      userID: userID || null,
+      order: data ? data[0] : null,
+      userID,
     },
   };
 };

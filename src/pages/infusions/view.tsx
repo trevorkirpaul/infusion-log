@@ -21,6 +21,7 @@ import { NotSignedInCard } from "@/components/NotSignedInCard";
 import { ParsedUrlQuery } from "querystring";
 import { useWindowScroll } from "@mantine/hooks";
 import { IconArrowUp } from "@tabler/icons-react";
+import { Breadcrumbs } from "@/components/BreadCrumbs";
 
 const createPageHref = (page: number) => `?page=${page}`;
 
@@ -84,6 +85,12 @@ export default function ViewInfusions({
           }}
         </Transition>
       </Affix>
+      <Breadcrumbs
+        crumbs={[
+          { title: "Home", href: "/" },
+          { title: "Infusions", href: "/infusions/view" },
+        ]}
+      />
       <Title className="mb-4">View Infusions ({numberOfInfusions})</Title>
       <Select
         className="mb-4"

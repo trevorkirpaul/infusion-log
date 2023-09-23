@@ -38,6 +38,13 @@ export const MobileBottomMenu: FC = () => {
             View
           </Button>
           <Button
+            onClick={() => router.push("/orders")}
+            variant={buttonVariant}
+            color="gray"
+          >
+            Orders
+          </Button>
+          <Button
             onClick={() => router.push("/profile")}
             variant={buttonVariant}
             color="gray"

@@ -7,6 +7,7 @@ import { supabase } from "@/utils/supabase";
 import { BleedingDisorder, User } from "@/utils/types";
 import { ProfileInfoPanel } from "@/components/Profile/InfoPanel";
 import { authOptions } from "../pages/api/auth/[...nextauth]";
+import { Breadcrumbs } from "@/components/BreadCrumbs";
 
 interface IProps {
   user: User | null;
@@ -19,9 +20,13 @@ export default function Profile({ user, bleedingDisorders }: IProps) {
     status === "authenticated" ? "/api/auth/signout" : "/api/auth/signin";
   return (
     <>
-      <div className="mb-10">
-        <Title className="mb-5">Profile</Title>
-      </div>
+      <Breadcrumbs
+        crumbs={[
+          { title: "Home", href: "/" },
+          { title: "Profile", href: "/profile" },
+        ]}
+      />
+      <Title className="mb-10">Profile</Title>
       <Stack>
         <Link href={signInLink}>
           <Button variant="outline" color="red">
