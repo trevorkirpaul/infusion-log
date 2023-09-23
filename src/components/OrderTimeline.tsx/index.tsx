@@ -7,7 +7,7 @@ import Link from "next/link";
 import { InfusionsForOrder } from "./InfusionsForOrder";
 
 interface IProps {
-  orders: FactorOrder[];
+  orders?: FactorOrder[] | null;
   infusionsByOrder: InfusionByOrder[];
 }
 
@@ -15,6 +15,7 @@ export const OrderTimeline: React.FC<IProps> = ({
   orders,
   infusionsByOrder,
 }) => {
+  if (!orders) return null;
   return (
     <>
       <Timeline active={orders.length - 1} bulletSize={24} lineWidth={2}>

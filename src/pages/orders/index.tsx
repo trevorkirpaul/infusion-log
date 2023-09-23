@@ -8,13 +8,22 @@ import { authOptions } from "../../pages/api/auth/[...nextauth]";
 import { FactorOrder, InfusionByOrder } from "@/utils/types";
 import { IconPlus } from "@tabler/icons-react";
 import { Breadcrumbs } from "@/components/BreadCrumbs";
+import { NotSignedInCard } from "@/components/NotSignedInCard";
 
 interface IProps {
-  orders: FactorOrder[];
+  orders?: FactorOrder[] | null;
   infusionsByOrder: InfusionByOrder[];
+  userID: string | null;
 }
 
-export default function Orders({ orders, infusionsByOrder }: IProps) {
+export default function Orders({ orders, infusionsByOrder, userID }: IProps) {
+  if (!userID) {
+    return (
+      <>
+        <NotSignedInCard />
+      </>
+    );
+  }
   return (
     <>
       <Breadcrumbs
@@ -62,6 +71,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     props: {
       orders: data,
       infusionsByOrder,
+      userID: userID || null,
     },
   };
 };
