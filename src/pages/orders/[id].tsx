@@ -54,14 +54,54 @@ export default function ViewOrder({ userID, order }: IProps) {
     setDeleteIsLoading(false);
   };
 
+  const handleUpdateFactorOrderByID = async (e: any) => {
+    e.preventDefault();
+
+    if (!order) return null;
+
+    setUpdateIsLoading(true);
+
+    const { quantity, doses_on_hand, order_placed_at, arrived } = e.target;
+
+    const response = await fetch(`/api/orders/${order.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        quantity: quantity.value,
+        doses_on_hand: doses_on_hand.value,
+        order_placed_at: order_placed_at[1].value,
+        userID,
+        arrived: arrived.checked,
+      }),
+    });
+
+    if (!response.ok) {
+      notifications.show({
+        title: "Something went wrong!",
+        message: "Please try again later.",
+        color: "red",
+        autoClose: 5000,
+      });
+    } else {
+      notifications.show({
+        title: "Success!",
+        message: "Factor Order updated.",
+        color: "green",
+        autoClose: 5000,
+      });
+    }
+
+    setUpdateIsLoading(false);
+  };
+
   return (
     <div>
       <Breadcrumbs mb={10}>{breadcrumbItems(order?.id)}</Breadcrumbs>
 
       <Title mb={10}>View/Update Order</Title>
       <OrderForm
-        handleSubmit={() => {}}
-        formIsLoading={false}
+        handleSubmit={handleUpdateFactorOrderByID}
+        formIsLoading={updateIsLoading}
         currentValues={order}
       />
       <div className="my-4">

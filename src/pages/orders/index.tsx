@@ -44,7 +44,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { data } = await supabase
     .from("factor_order")
     .select("*", { count: "exact", head: false })
-    .eq("user_id", userID);
+    .eq("user_id", userID)
+    .order("order_placed_at", { ascending: false });
 
   return {
     props: {
