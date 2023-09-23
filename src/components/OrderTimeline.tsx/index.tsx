@@ -35,8 +35,11 @@ export const OrderTimeline: React.FC<IProps> = ({ orders }) => {
               <Text c="dimmed" size="sm" my={8}>
                 {dayjs(o.order_placed_at).format("MM/DD/YYYY h:mmA")}
               </Text>
-              <Link className="text-blue-400" href={`/orders/${o.id}`}>
-                View More
+              <Link
+                className="text-blue-400 border rounded border-gray-600 py-1 px-2 inline-block hover:text-blue-200 hover:border-blue-200"
+                href={`/orders/${o.id}`}
+              >
+                View / Edit
               </Link>
             </Timeline.Item>
           );
