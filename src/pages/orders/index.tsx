@@ -5,15 +5,16 @@ import { getServerSession } from "next-auth/next";
 import { GetServerSideProps } from "next";
 import { supabase } from "@/utils/supabase";
 import { authOptions } from "../../pages/api/auth/[...nextauth]";
-import { FactorOrder } from "@/utils/types";
+import { FactorOrder, InfusionByOrder } from "@/utils/types";
 import { IconPlus } from "@tabler/icons-react";
 import { Breadcrumbs } from "@/components/BreadCrumbs";
 
 interface IProps {
   orders: FactorOrder[];
+  infusionsByOrder: InfusionByOrder[];
 }
 
-export default function Orders({ orders }: IProps) {
+export default function Orders({ orders, infusionsByOrder }: IProps) {
   return (
     <>
       <Breadcrumbs
@@ -30,7 +31,7 @@ export default function Orders({ orders }: IProps) {
         </Button>
       </Link>
 
-      <OrderTimeline orders={orders} />
+      <OrderTimeline orders={orders} infusionsByOrder={infusionsByOrder} />
     </>
   );
 }
@@ -45,9 +46,17 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     .eq("user_id", userID)
     .order("order_placed_at", { ascending: false });
 
+  // get_infusions_by_order_for_user
+
+  const { data: infusionsByOrder } = await supabase.rpc(
+    "get_infusions_by_order_for_user",
+    { uid: userID }
+  );
+
   return {
     props: {
       orders: data,
+      infusionsByOrder,
     },
   };
 };

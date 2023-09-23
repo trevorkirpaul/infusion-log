@@ -31,3 +31,9 @@ export interface FactorOrder {
   user_id: number;
   arrived: boolean;
 }
+
+export interface InfusionByOrder {
+  order_id: number;
+  infusion_id: number;
+  user_id: number;
+}
