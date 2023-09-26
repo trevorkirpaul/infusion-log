@@ -36,11 +36,7 @@ const handlePost = async (
   try {
     const { body } = req;
 
-    if (!body.bleedLocation || body.bleedLocation === "") {
-      return res.status(400).send("Bleed location is required");
-    }
-
-    if (userIDFromSession !== body.userID) {
+    if (userIDFromSession !== Number(body.userID)) {
       return res
         .status(400)
         .send(
@@ -48,21 +44,29 @@ const handlePost = async (
         );
     }
 
-    const { data: newlyCreatedInfusion, error: errorForNewlyCreatedInfusion } =
-      await supabase
-        .from("infusion")
-        .insert({
-          infusion_date: body.infusionDate,
-          bleed_location: body.bleedLocation,
-          treated_within: body.treatedWithin,
-          notes: body.notes,
-          user_id: body.userID,
-        })
-        .select();
+    if (
+      !body.quantity ||
+      !body.doses_on_hand ||
+      !body.order_placed_at ||
+      !body.userID
+    ) {
+      return res.status(400).send("missing values required");
+    }
+
+    const { data, error } = await supabase
+      .from("factor_order")
+      .insert({
+        quantity: body.quantity,
+        doses_on_hand: body.doses_on_hand,
+        order_placed_at: body.order_placed_at,
+        user_id: body.userID,
+        arrived: body.arrived || false,
+      })
+      .select();
 
     res.status(200).send({
-      newlyCreatedInfusion,
-      errorForNewlyCreatedInfusion,
+      newlyCreatedFactorOrder: data,
+      error,
     });
   } catch (e) {
     handleError(res, e);

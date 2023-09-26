@@ -47,12 +47,14 @@ const handleDelete = async (
         );
     }
 
-    const { data: deletedInfusion, error: errorForDeletedInfusion } =
-      await supabase.from("infusion").delete().match({ id: id });
+    const { data: deletedOrder, error: errorForOrder } = await supabase
+      .from("factor_order")
+      .delete()
+      .match({ id: id });
 
     res.status(200).send({
-      deletedInfusion,
-      errorForDeletedInfusion,
+      deletedOrder,
+      errorForOrder,
     });
   } catch (e) {
     handleError(res, e);
@@ -66,7 +68,9 @@ const handleUpdate = async (
 ) => {
   try {
     const { id } = req.query;
-    const { userID } = req.body;
+
+    const { quantity, doses_on_hand, order_placed_at, userID, arrived } =
+      req.body;
 
     if (userIDFromSession !== Number(userID)) {
       return res
@@ -76,23 +80,22 @@ const handleUpdate = async (
         );
     }
 
-    const { bleed_location, infusion_date, notes, treated_within } = req.body;
-
-    const { data: newlyUpdatedInfusion, error: updateInfusionError } =
+    const { data: newlyUpdatedFactorORder, error: updatedFactorOrderError } =
       await supabase
-        .from("infusion")
+        .from("factor_order")
         .update({
-          bleed_location,
-          infusion_date,
-          notes,
-          treated_within,
+          quantity: quantity,
+          doses_on_hand: doses_on_hand,
+          order_placed_at: order_placed_at,
+          user_id: userID,
+          arrived: arrived || false,
         })
         .eq("id", id)
         .select();
 
     res.status(200).send({
-      newlyUpdatedInfusion,
-      updateInfusionError,
+      newlyUpdatedFactorORder,
+      updatedFactorOrderError,
     });
   } catch (e) {
     handleError(res, e);
