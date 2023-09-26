@@ -46,7 +46,7 @@ export const InfusionsForOrder: React.FC<IProps> = ({
       <Collapse in={opened}>
         <ul className="mt-2">
           {infusionsForThisOrder.map((infusion) => (
-            <li>
+            <li key={infusion.infusion_id}>
               <Text mb={8} size="sm">
                 <Link
                   className="text-blue-400 underline"
