@@ -25,6 +25,7 @@ export const OrderTimeline: React.FC<IProps> = ({
               bullet={o.arrived ? <IconCircleCheck /> : <IconClockHour3 />}
               title={`${o.quantity} dose(s) ordered`}
               color={o.arrived ? "green" : "yellow"}
+              key={o.id}
             >
               <Text size="sm" mt={4}>
                 Arrived:{" "}
