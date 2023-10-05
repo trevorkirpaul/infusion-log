@@ -1,15 +1,18 @@
 import { FC, useState } from "react";
-import { IconMenu, IconChevronRight } from "@tabler/icons-react";
+import { IconChevronRight } from "@tabler/icons-react";
 import {
   Paper,
   Transition,
-  Text,
   createStyles,
   MediaQuery,
+  Burger,
+  Avatar,
+  Text,
 } from "@mantine/core";
 import { NavLink } from "@mantine/core";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
 
 const useStyles = createStyles((theme) => ({
   dropdown: {
@@ -57,6 +60,9 @@ const routes = [
 ];
 
 export const MobileMenu: FC = () => {
+  const { status, data } = useSession();
+  const src = status === "authenticated" ? data?.user?.image : null;
+
   const [isOpen, setIsOpen] = useState(false);
   const { classes, cx, theme } = useStyles();
   const router = useRouter();
@@ -64,9 +70,10 @@ export const MobileMenu: FC = () => {
   return (
     <MediaQuery largerThan={"md"} styles={{ display: "none" }}>
       <div>
-        <IconMenu
-          className=" cursor-pointer"
+        <Burger
+          opened={isOpen}
           onClick={() => setIsOpen((prev) => !prev)}
+          size="sm"
         />
         <Transition transition="scale-y" duration={200} mounted={isOpen}>
           {(styles) => (
@@ -78,6 +85,12 @@ export const MobileMenu: FC = () => {
               radius={0}
             >
               <ul>
+                <li className="pl-3 py-4 flex items-center font-bold">
+                  <Avatar size={"md"} radius={"xl"} src={src} />
+                  <Text className="ml-3">
+                    {data?.user?.email || "Not signed in"}
+                  </Text>
+                </li>
                 {routes.map((r) => (
                   <li key={r.href}>
                     <Link href={r.href}>
