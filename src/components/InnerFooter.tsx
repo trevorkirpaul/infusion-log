@@ -3,7 +3,6 @@ import Link from "next/link";
 import { NavLink, Avatar, Text, MediaQuery } from "@mantine/core";
 import { useSession } from "next-auth/react";
 import { IconChevronRight } from "@tabler/icons-react";
-import { MobileBottomMenu } from "./MobileBottomMenu";
 
 const InnerFooter: FC = () => {
   const { status, data } = useSession();
@@ -31,8 +30,6 @@ const InnerFooter: FC = () => {
           />
         </Link>
       </MediaQuery>
-      {/* For Mobile Menu - responsive in component */}
-      <MobileBottomMenu />
     </>
   );
 };
