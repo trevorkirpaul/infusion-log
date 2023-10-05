@@ -1,6 +1,7 @@
 import { useSession } from "next-auth/react";
 import { Text } from "@mantine/core";
 import type { ReactNode } from "react";
+import { MobileMenu } from "./MobileMenu";
 
 interface IProps {
   burgerMenu?: ReactNode;
@@ -16,6 +17,7 @@ export default function InnerHeader({}: IProps) {
           &#128221; Infusion Log
         </Text>
       </div>
+      <MobileMenu />
     </div>
   );
 }
