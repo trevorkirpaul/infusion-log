@@ -22,6 +22,7 @@ WITH
       ) as end_date
     FROM
       factor_order fo1
+    WHERE (fo1.user_id = $1)
   )
 SELECT
   dp.order_id as order_id,

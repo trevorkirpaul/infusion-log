@@ -51,9 +51,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </Header>
         }
         footer={
-          <Footer height={70} p="xs">
-            <InnerFooter />
-          </Footer>
+          <MediaQuery smallerThan="md" styles={{ display: "none" }}>
+            <Footer height={70} p="xs">
+              <InnerFooter />
+            </Footer>
+          </MediaQuery>
         }
         styles={(theme) => ({
           main: {
