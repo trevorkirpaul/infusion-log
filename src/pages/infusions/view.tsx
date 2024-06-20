@@ -181,13 +181,18 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { page, bleed_location = null, count } = ctx.query;
   const range = getRange(page, Number(count || 5));
 
-  const { count: numberOfInfusions, data } = await supabase
+  let query = supabase
     .from("infusion")
     .select("*", { count: "exact", head: false })
     .eq("user_id", userID)
-    .eq(bleed_location ? "bleed_location" : "", bleed_location)
     .order("infusion_date", { ascending: false })
     .range(range.start, range.end);
+
+  if (bleed_location) {
+    query = query.eq("bleed_location", bleed_location);
+  }
+
+  const { count: numberOfInfusions, data } = await query;
 
   const { data: allBleedLocations, error: allBleedLocationsError } =
     await supabase
